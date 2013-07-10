@@ -8,16 +8,13 @@ using namespace gold;
 
 int main() {
 
-	Variant v(123);
-	Variant v2("Hello");
+	Variant MyMap = new VarMap();
 
-	{
-		Variant v3 = v;
+	MyMap->Set("Hello", "World");
+	MyMap->Set("Foo", "Bar");
 
-		v2 = v3;
-	}
+	std::cout << MyMap << std::endl;
 
-	std::cout << v2 << std::endl;
 
 	return 0;
 }

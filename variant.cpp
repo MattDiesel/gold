@@ -15,6 +15,8 @@ namespace gold {
 
 // Variant constants
 
+// These are the only two boolean variants ever created. Future boolean values
+// will reference one of these.
 Variant VarTrue(new VarBool(true));
 Variant VarFalse(new VarBool(false));
 Variant VarZero(0.0);
@@ -204,23 +206,23 @@ double VariantBase::AsFloat() const {
 
 
 Variant VariantBase::ToBool() const {
-	return Variant::Create<VarBool>(this->AsBool());
+	return new VarBool(this->AsBool());
 }
 
 Variant VariantBase::ToString() const {
-	return Variant::Create<VarString>(this->AsString());
+	return new VarString(this->AsString());
 }
 
 Variant VariantBase::ToNumber() const {
-	return Variant::Create<VarNumeric>(this->AsInt());
+	return new VarNumeric(this->AsInt());
 }
 
 Variant VariantBase::ToInt() const {
-	return Variant::Create<VarNumeric>(this->AsInt());
+	return new VarNumeric(this->AsInt());
 }
 
 Variant VariantBase::ToFloat() const {
-	return Variant::Create<VarNumeric>(this->AsFloat());
+	return new VarNumeric(this->AsFloat());
 }
 
 template<class T>
@@ -311,7 +313,7 @@ double VarNumeric::AsFloat() const {
 }
 
 Variant VarNumeric::ToNumber() const {
-	return(Variant::Create<VarNumeric>(this->Value));
+	return(Variant(new VarNumeric(this->Value)));
 }
 
 std::ostream& VarNumeric::Write(std::ostream& os) const {
@@ -395,7 +397,7 @@ double VarString::AsFloat() const {
 Variant VarString::ToNumber() const {
 	double d = std::stod(this->Value);
 
-	return(Variant::Create<VarNumeric>(d));
+	return(Variant(new VarNumeric(d)));
 }
 
 int VarString::Compare(const Variant& a, const Variant& b) {
@@ -417,8 +419,6 @@ int VarString::Compare(const Variant& a, const Variant& b) {
 
 // class VarArray
 
-VarArray::~VarArray() {
-}
 
 const std::string VarArray::typeName("Array");
 const std::string& VarArray::GetType() const {
@@ -431,14 +431,8 @@ bool VarArray::IsArray() const {
 }
 
 Variant& VarArray::Get(int i) {
-	// return(Variant::Create<VariantBase>(this->Value.at(i)));
+	// return(Variant(new VariantBase(this->Value.at(i))));
 	return(this->Value.at(i));
-}
-
-Variant& VarArray::Get(const std::string& s) {
-	Variant i = Variant::Create<VarNumeric>(s);
-
-	return(this->Get(i));
 }
 
 Variant& VarArray::Get(Variant v) {
@@ -449,12 +443,6 @@ Variant& VarArray::Get(Variant v) {
 
 Variant VarArray::Set(int i, Variant v) {
 	this->Get(i) = v;
-
-	return(v);
-}
-
-Variant VarArray::Set(const std::string& s, Variant v) {
-	this->Get(s) = v;
 
 	return(v);
 }
@@ -488,7 +476,7 @@ bool VarArray::Remove(Variant i) {
 }
 
 Variant VarArray::Count() {
-	return(Variant::Create<VarNumeric>(int(this->Value.size())));
+	return(Variant(new VarNumeric(int(this->Value.size()))));
 }
 
 std::ostream& VarArray::Write(std::ostream& os) const {
@@ -507,9 +495,6 @@ std::ostream& VarArray::Write(std::ostream& os) const {
 // class VarMap
 
 VarMap::VarMap() {
-}
-
-VarMap::~VarMap() {
 }
 
 const std::string VarMap::typeName("Map");
@@ -547,18 +532,19 @@ bool VarMap::Remove(Variant key) {
 }
 
 Variant VarMap::Count() {
-	return(Variant::Create<VarNumeric>(int(this->Value.size())));
+	return(Variant(new VarNumeric(int(this->Value.size()))));
 }
 
 std::ostream& VarMap::Write(std::ostream& os) const {
-	os << "{\n";
+	os << "{";
 
-	for (std::pair<Variant, Variant> p : this->Value) {
-		std::get<0>(p)->Write(os);
+	for (auto iter = this->Value.begin(); iter != this->Value.end(); ++iter) {
+		std::get<0>(*iter)->Write(os);
 		os << ": ";
-		std::get<1>(p)->Write(os);
+		std::get<1>(*iter)->Write(os);
 
-		os << ", \n";
+		if (&*iter != &*this->Value.rbegin())
+			os << ", ";
 	}
 
 	os << "}";
@@ -566,6 +552,35 @@ std::ostream& VarMap::Write(std::ostream& os) const {
 	return(os);
 }
 
+
+
+// class VarTuple
+
+const std::string VarTuple::typeName("Tuple");
+const std::string& VarTuple::GetType() const {
+	return(VarTuple::typeName);
+}
+
+
+bool VarTuple::IsArray() const {
+	return(false);
+}
+
+bool VarTuple::IsTuple() const {
+	return(true);
+}
+
+std::ostream& VarTuple::Write(std::ostream& os) const {
+	os << '([)';
+
+	for (Variant v : this->Value) {
+		v->Write(os);
+
+		os << ((v == this->Value.back()) ? ")" : ", ");
+	}
+
+	return(os);
+}
 
 
 } // namespace gold

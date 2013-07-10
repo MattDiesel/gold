@@ -19,36 +19,59 @@ class VariantBase;
 /// A reference counting pointer wrapper around VariantBase derived objects.
 class Variant {
 public:
-	template<class T, class... Args>
-	static Variant Create(Args&&... args) {
-		return(Variant(new T(args...)));
-	}
 
 	// Constructors required for ref counting -------------
 
+	/// Creates a new null variant.
 	Variant();
+
+	/// Creates a new variant wrapper for the VariantBase derived pointer
 	Variant(VariantBase*);
+
+	/// Copies a variant.
 	Variant(const Variant&);
+
+	/// Variant destructor. Decrements the reference count.
 	~Variant();
 
 
 	// Convenience constructors ---------------------------
 
+	/// Creates a boolean variant
 	Variant(bool);
+
+	/// Creates a numeric variant from an integer
 	Variant(int);
+
+	/// Creates a numeric variant
 	Variant(double);
+
+	/// Creates a string variant from a literal string
 	Variant(const char*);
+
+	/// Creates a string variant.
 	Variant(std::string);
 
 
 	// Assignment (for ref counting) ----------------------
 
+	/// Assigns a variant to another variant.
 	Variant& operator=(const Variant&);
+
+	/// Assigns a pointer to a variant.
+	/// Allows Variant v = new VarType(args)
 	Variant& operator=(VariantBase*);
 
 	// Methods for ref counting ---------------------------
+
+	/// Redirects access from variant to pointer
 	VariantBase* operator->();
+
+	/// Const variant.
 	const VariantBase* operator->() const;
+
+	/// Allows checking for NULL in the same way as a pointer
+	/// if (MyVariant) { ... }
 	operator bool() const;
 
 	// Methods working on variant types -------------------
@@ -305,21 +328,17 @@ private:
 
 class VarArray : public VariantBase {
 public:
-	~VarArray();
-
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;
 
 	/// Returns true.
 	virtual bool IsArray() const;
 
-	virtual Variant& Get(int);
+	virtual Variant& Get(Variant);
 	virtual Variant Set(Variant, Variant);
 
-	virtual Variant& Get(const std::string&);
-	virtual Variant& Get(Variant);
+	virtual Variant& Get(int);
 	virtual Variant Set(int, Variant);
-	virtual Variant Set(const std::string&, Variant);
 
 	bool Add(Variant);
 	bool Insert(Variant, int);
@@ -338,7 +357,6 @@ private:
 class VarMap : public VariantBase {
 public:
 	VarMap();
-	~VarMap();
 
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;
@@ -360,9 +378,21 @@ private:
 	static const std::string typeName;
 };
 
-class VarTuple : public VariantBase {
+class VarTuple : public VarArray {
 public:
-	// TODO
+	/// Returns the type as a string.
+	virtual const std::string& GetType() const;
+
+	/// Returns false.
+	virtual bool IsArray() const;
+
+	/// Returns true.
+	virtual bool IsTuple() const;
+
+	virtual std::ostream& Write(std::ostream&) const;
+
+private:
+	static const std::string typeName;
 };
 
 
