@@ -26,10 +26,10 @@ public:
 	Variant();
 
 	/// Creates a new variant wrapper for the VariantBase derived pointer
-	Variant(VariantBase*);
+	Variant( VariantBase* );
 
 	/// Copies a variant.
-	Variant(const Variant&);
+	Variant( const Variant& );
 
 	/// Variant destructor. Decrements the reference count.
 	~Variant();
@@ -38,29 +38,29 @@ public:
 	// Convenience constructors ---------------------------
 
 	/// Creates a boolean variant
-	Variant(bool);
+	Variant( bool );
 
 	/// Creates a numeric variant from an integer
-	Variant(int);
+	Variant( int );
 
 	/// Creates a numeric variant
-	Variant(double);
+	Variant( double );
 
 	/// Creates a string variant from a literal string
-	Variant(const char*);
+	Variant( const char* );
 
 	/// Creates a string variant.
-	Variant(std::string);
+	Variant( std::string );
 
 
 	// Assignment (for ref counting) ----------------------
 
 	/// Assigns a variant to another variant.
-	Variant& operator=(const Variant&);
+	Variant& operator=( const Variant& );
 
 	/// Assigns a pointer to a variant.
 	/// Allows Variant v = new VarType(args)
-	Variant& operator=(VariantBase*);
+	Variant& operator=( VariantBase* );
 
 	// Methods for ref counting ---------------------------
 
@@ -140,10 +140,10 @@ public:
 	// Collection methods ---------------------------------
 
 	/// Retrieves the item at the given index or key
-	virtual Variant& Get(Variant);
+	virtual Variant& Get( Variant );
 
 	/// Sets the item at the given index or key
-	virtual Variant Set(Variant, Variant);
+	virtual Variant Set( Variant, Variant );
 
 
 	// To native types ------------------------------------
@@ -182,18 +182,18 @@ public:
 	// Comparison functions -------------------------------
 
 	/// Compares two variants
-	static int Compare(const Variant&, const Variant&);
+	static int Compare( const Variant&, const Variant& );
 
 	/// Less than operator for STL containers to use.
 	struct Less {
 		/// Less-Than operator
-		bool operator()(const Variant&, const Variant&) const;
+		bool operator()( const Variant&, const Variant& ) const;
 	};
 
 	// Utility methods ------------------------------------
 
 	/// Writes the string version of the variant to the output stream
-	virtual std::ostream& Write(std::ostream&) const;
+	virtual std::ostream& Write( std::ostream& ) const;
 
 	// Debugging and diagnostic methods -------------------
 	// Todo: Repr?
@@ -201,7 +201,7 @@ public:
 
 
 /// Wrapper around VariantBase::Write for use with C++ streams.
-std::ostream& operator<<(std::ostream&, Variant&);
+std::ostream& operator<<( std::ostream&, Variant& );
 
 
 /// Variant class for all number types.
@@ -210,10 +210,10 @@ public:
 
 	/// Creates a new Numeric variant.
 	/// Same constructor used for all native numeric types
-	VarNumeric(double);
+	VarNumeric( double );
 
 	/// Parses a number from a string.
-	VarNumeric(const std::string&);
+	VarNumeric( const std::string& );
 
 
 	/// Returns the type as a string.
@@ -251,11 +251,11 @@ public:
 
 
 	/// Writes the string version of the variant to the output stream
-	virtual std::ostream& Write(std::ostream&) const;
+	virtual std::ostream& Write( std::ostream& ) const;
 
 
 	/// Compares two Variants using a numeric comparison
-	static int Compare(const Variant&, const Variant&);
+	static int Compare( const Variant&, const Variant& );
 
 	/// The stored value.
 	double Value;
@@ -268,11 +268,11 @@ private:
 class VarBool : public VariantBase {
 public:
 	/// Creates a new boolean Variant.
-	VarBool(bool);
+	VarBool( bool );
 
 	/// Creates a new boolean variant from a string value.
 	/// Empty strings are FALSE, non empty strings are TRUE.
-	VarBool(const std::string&);
+	VarBool( const std::string& );
 
 
 	/// Returns the type as a string.
@@ -304,7 +304,7 @@ private:
 class VarString : public VariantBase {
 public:
 	/// Creates a new string variant.
-	VarString(std::string);
+	VarString( std::string );
 
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;
@@ -319,7 +319,7 @@ public:
 
 	virtual Variant ToNumber() const;
 
-	static int Compare(const Variant&, const Variant&);
+	static int Compare( const Variant&, const Variant& );
 
 	std::string Value;
 private:
@@ -334,20 +334,20 @@ public:
 	/// Returns true.
 	virtual bool IsArray() const;
 
-	virtual Variant& Get(Variant);
-	virtual Variant Set(Variant, Variant);
+	virtual Variant& Get( Variant );
+	virtual Variant Set( Variant, Variant );
 
-	virtual Variant& Get(int);
-	virtual Variant Set(int, Variant);
+	virtual Variant& Get( int );
+	virtual Variant Set( int, Variant );
 
-	bool Add(Variant);
-	bool Insert(Variant, int);
-	bool Insert(Variant, Variant);
-	bool Remove(int);
-	bool Remove(Variant);
+	bool Add( Variant );
+	bool Insert( Variant, int );
+	bool Insert( Variant, Variant );
+	bool Remove( int );
+	bool Remove( Variant );
 	Variant Count();
 
-	virtual std::ostream& Write(std::ostream&) const;
+	virtual std::ostream& Write( std::ostream& ) const;
 
 	std::vector<Variant> Value;
 private:
@@ -364,14 +364,14 @@ public:
 	/// Returns true.
 	virtual bool IsMap() const;
 
-	virtual Variant& Get(Variant);
-	virtual Variant Set(Variant, Variant);
+	virtual Variant& Get( Variant );
+	virtual Variant Set( Variant, Variant );
 
-	bool Add(Variant, Variant);
-	bool Remove(Variant);
+	bool Add( Variant, Variant );
+	bool Remove( Variant );
 	Variant Count();
 
-	virtual std::ostream& Write(std::ostream&) const;
+	virtual std::ostream& Write( std::ostream& ) const;
 
 	std::map<Variant, Variant, VariantBase::Less> Value;
 private:
@@ -389,7 +389,7 @@ public:
 	/// Returns true.
 	virtual bool IsTuple() const;
 
-	virtual std::ostream& Write(std::ostream&) const;
+	virtual std::ostream& Write( std::ostream& ) const;
 
 private:
 	static const std::string typeName;

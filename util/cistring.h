@@ -2,6 +2,8 @@
 
 #include <string>
 
+#ifndef UTIL_CISTRING_H
+#define UTIL_CISTRING_H
 
 struct ci_char_traits : public std::char_traits<char> {
 	static bool eq(char, char);
@@ -12,3 +14,6 @@ struct ci_char_traits : public std::char_traits<char> {
 };
 
 typedef std::basic_string<char, ci_char_traits> cistring;
+
+
+#endif
