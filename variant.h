@@ -67,7 +67,8 @@ public:
 	/// Redirects access from variant to pointer
 	VariantBase* operator->();
 
-	/// Const variant.
+	/// Const version of the above.
+	/// Allows const methods to be used on variants.
 	const VariantBase* operator->() const;
 
 	/// Allows checking for NULL in the same way as a pointer
@@ -100,10 +101,14 @@ private:
 
 	mutable int refCount;
 protected:
+	/// Initializes the ref count for a new variant
 	VariantBase();
-	virtual ~VariantBase();
 
+	/// Increments the ref counter.
 	void refInc() const;
+
+	/// Decrements the ref counter.
+	/// If this moves the ref count to zero then the variant is deleted.
 	void refDec() const;
 
 public:
@@ -112,6 +117,9 @@ public:
 	/// Returns the type as a string.
 	/// Must be implemented by all derived classes.
 	virtual const std::string& GetType() const = 0;
+
+	/// Checks if the Variant is a boolean
+	virtual bool IsBool() const;
 
 	/// Checks if the Variant is a number
 	virtual bool IsNumber() const;
@@ -122,6 +130,9 @@ public:
 	/// Checks if the Variant is a real number
 	virtual bool IsFloat() const;
 
+	/// Checks if the Variant is a string
+	virtual bool IsString() const;
+
 	/// Checks if the Variant is an Array
 	virtual bool IsArray() const;
 
@@ -130,12 +141,6 @@ public:
 
 	/// Checks if the Variant is a tuple
 	virtual bool IsTuple() const;
-
-	/// Checks if the Variant is a boolean
-	virtual bool IsBool() const;
-
-	/// Checks if the Variant is a string
-	virtual bool IsString() const;
 
 	// Collection methods ---------------------------------
 
@@ -187,6 +192,10 @@ public:
 	// Comparison functions -------------------------------
 
 	/// Compares two variants
+	/// Returns:
+	///    -1 if a < b
+	///    1 if a > b
+	///    0 if a == b
 	static int Compare( const Variant&, const Variant& );
 
 	/// Less than operator for STL containers to use.
@@ -206,7 +215,7 @@ public:
 
 
 /// Wrapper around VariantBase::Write for use with C++ streams.
-std::ostream& operator<<( std::ostream&, Variant& );
+std::ostream& operator<<( std::ostream&, const Variant& );
 
 
 /// Variant class for all number types.
@@ -273,6 +282,7 @@ private:
 class VarBool : public VariantBase {
 public:
 	/// Creates a new boolean Variant.
+	/// This should only be called twice for TRUE and FALSE.
 	VarBool( bool );
 
 	/// Creates a new boolean variant from a string value.
@@ -302,7 +312,14 @@ public:
 
 	bool Value;
 private:
+	/// The type name as returned by GetType()
 	static const std::string typeName;
+
+	/// The string value of TRUE
+	static const std::string strTrue;
+
+	/// The string value of FALSE
+	static const std::string strFalse;
 };
 
 /// Variant class for strings types
@@ -337,10 +354,12 @@ public:
 	virtual Variant ToNumber() const;
 
 	/// Compares two variants for equality as strings.
+	/// Comparison is case insensitive.
 	static int Compare( const Variant&, const Variant& );
 
 	std::string Value;
 private:
+	/// The type name as returned by GetType()
 	static const std::string typeName;
 };
 
@@ -389,6 +408,7 @@ public:
 
 	std::vector<Variant> Value;
 private:
+	/// The type name as returned by GetType()
 	static const std::string typeName;
 };
 
@@ -424,6 +444,7 @@ public:
 
 	std::map<Variant, Variant, VariantBase::Less> Value;
 private:
+	/// The type name as returned by GetType()
 	static const std::string typeName;
 };
 
@@ -445,6 +466,7 @@ public:
 	virtual std::ostream& Write( std::ostream& ) const;
 
 private:
+	/// The type name as returned by GetType()
 	static const std::string typeName;
 };
 
