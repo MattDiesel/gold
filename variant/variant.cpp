@@ -6,7 +6,7 @@
 #include <ostream>
 #include <sstream>
 
-#include "util/cistring.h"
+#include "../util/cistring.h"
 
 #include "variant.h"
 
@@ -126,13 +126,23 @@ Variant& Variant::operator=( VariantBase* bs ) {
 }
 
 /// Redirects access from variant to pointer
+/// If used on a NULL variant, then this is
+///   redrected to the empty string variant.
 VariantBase* Variant::operator->() {
+	if (!this->variant) {
+		return( VarEmptyStr.variant );
+	}
+
 	return( this->variant );
 }
 
 /// Const version of the above.
 /// Allows const methods to be used on variants.
 const VariantBase* Variant::operator->() const {
+	if (!this->variant) {
+		return( VarEmptyStr.variant );
+	}
+
 	return( this->variant );
 }
 

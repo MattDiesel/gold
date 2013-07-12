@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "util/cistring.h"
-#include "variant.h"
+#include "variant/variant.h"
 
 #include "symboltable.h"
 
