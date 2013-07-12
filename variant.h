@@ -317,13 +317,26 @@ public:
 	/// Returns true.
 	virtual bool IsString() const;
 
+	/// Returns the string as a boolean value.
+	/// "" is FALSE, all other values are TRUE.
 	virtual bool AsBool() const;
+
+	/// Returns the native string value
 	virtual std::string AsString() const;
+
+	/// Returns the string value as an integer.
+	/// Non-integer strings return zero
 	virtual int AsInt() const;
+
+	/// Returns the string value as a real
+	/// Non-numeric string values return zero
 	virtual double AsFloat() const;
 
+	/// Returns the string value as a numeric variant.
+	/// Non-numeric string values return zero.
 	virtual Variant ToNumber() const;
 
+	/// Compares two variants for equality as strings.
 	static int Compare( const Variant&, const Variant& );
 
 	std::string Value;
@@ -340,19 +353,38 @@ public:
 	/// Returns true.
 	virtual bool IsArray() const;
 
+	/// Retrieves the item at the given index
 	virtual Variant& Get( const Variant );
+
+	/// Sets the item at the given index
 	virtual Variant Set( const Variant, Variant );
 
+	/// Retrieves the item at the given index
 	virtual Variant& Get( int );
+
+	/// Sets the item at the given index
 	virtual Variant Set( int, Variant );
 
+
+	/// Adds an item to the array
 	bool Add( Variant );
+
+	/// Inserts an item into the array.
 	bool Insert( const Variant, int );
+
+	/// Inserts an item into the array.
 	bool Insert( const Variant, Variant );
+
+	/// Removes an item from the array
 	bool Remove( int );
+
+	/// Removes an item from the array
 	bool Remove( const Variant );
+
+	/// Returns the number of items in the array.
 	Variant Count();
 
+	/// Writes the string version of the variant to the output stream
 	virtual std::ostream& Write( std::ostream& ) const;
 
 	std::vector<Variant> Value;
@@ -360,8 +392,10 @@ private:
 	static const std::string typeName;
 };
 
+/// Variant class for a map (dictionary/associative array etc.)
 class VarMap : public VariantBase {
 public:
+	/// Creates a new, empty, map variant.
 	VarMap();
 
 	/// Returns the type as a string.
@@ -370,16 +404,22 @@ public:
 	/// Returns true.
 	virtual bool IsMap() const;
 
-	/// Retrieves the item at the given index or key
+	/// Retrieves the item at the given key
 	virtual Variant& Get( const Variant );
 
-	/// Sets0 the item at the given key
+	/// Sets the item at the given key
 	virtual Variant Set( const Variant, Variant );
 
-	bool Add( const Variant, Variant );
-	bool Remove( const Variant );
-	Variant Count();
+	/// Adds a variant to the map.
+	virtual bool Add( const Variant, Variant );
 
+	/// Removes a variant from the map
+	virtual bool Remove( const Variant );
+
+	/// Returns the number of key-value pairs in the map
+	virtual Variant Count();
+
+	/// Writes the string version of the variant to the output stream
 	virtual std::ostream& Write( std::ostream& ) const;
 
 	std::map<Variant, Variant, VariantBase::Less> Value;
@@ -387,6 +427,9 @@ private:
 	static const std::string typeName;
 };
 
+/// Variant class representing a tuple
+///   Tuples are alternatives to lists, that are treated slightly differently in
+///   assignment and other instances.
 class VarTuple : public VarArray {
 public:
 	/// Returns the type as a string.
@@ -398,6 +441,7 @@ public:
 	/// Returns true.
 	virtual bool IsTuple() const;
 
+	/// Writes the string version of the variant to the output stream
 	virtual std::ostream& Write( std::ostream& ) const;
 
 private:
