@@ -50,7 +50,6 @@ public:
 
 class SymbolTable {
 public:
-
 	SymbolTable();
 	~SymbolTable();
 

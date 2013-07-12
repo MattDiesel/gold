@@ -140,10 +140,15 @@ public:
 	// Collection methods ---------------------------------
 
 	/// Retrieves the item at the given index or key
-	virtual Variant& Get( Variant );
+	virtual Variant& Get( const Variant );
 
 	/// Sets the item at the given index or key
-	virtual Variant Set( Variant, Variant );
+	virtual Variant Set( const Variant, Variant );
+
+	// Function methods -----------------------------------
+
+	/// Invokes a function
+	virtual Variant Call( Variant );
 
 
 	// To native types ------------------------------------
@@ -326,6 +331,7 @@ private:
 	static const std::string typeName;
 };
 
+/// Variant class for array types
 class VarArray : public VariantBase {
 public:
 	/// Returns the type as a string.
@@ -334,17 +340,17 @@ public:
 	/// Returns true.
 	virtual bool IsArray() const;
 
-	virtual Variant& Get( Variant );
-	virtual Variant Set( Variant, Variant );
+	virtual Variant& Get( const Variant );
+	virtual Variant Set( const Variant, Variant );
 
 	virtual Variant& Get( int );
 	virtual Variant Set( int, Variant );
 
 	bool Add( Variant );
-	bool Insert( Variant, int );
-	bool Insert( Variant, Variant );
+	bool Insert( const Variant, int );
+	bool Insert( const Variant, Variant );
 	bool Remove( int );
-	bool Remove( Variant );
+	bool Remove( const Variant );
 	Variant Count();
 
 	virtual std::ostream& Write( std::ostream& ) const;
@@ -364,11 +370,14 @@ public:
 	/// Returns true.
 	virtual bool IsMap() const;
 
-	virtual Variant& Get( Variant );
-	virtual Variant Set( Variant, Variant );
+	/// Retrieves the item at the given index or key
+	virtual Variant& Get( const Variant );
 
-	bool Add( Variant, Variant );
-	bool Remove( Variant );
+	/// Sets0 the item at the given key
+	virtual Variant Set( const Variant, Variant );
+
+	bool Add( const Variant, Variant );
+	bool Remove( const Variant );
 	Variant Count();
 
 	virtual std::ostream& Write( std::ostream& ) const;

@@ -185,16 +185,21 @@ bool VariantBase::IsTuple() const {
 }
 
 
-Variant& VariantBase::Get( Variant v ) {
+Variant& VariantBase::Get( const Variant v ) {
 	// throw EvaluateError("Attempt to access a non-collection!");
 	throw "Attempt to access a non-collection!";
 }
 
-Variant VariantBase::Set( Variant key, Variant value ) {
+Variant VariantBase::Set( const Variant key, Variant value ) {
 	this->Get( key ) = value;
 	return( value );
 }
 
+
+Variant VariantBase::Call( Variant v ) {
+	// Error: Calling something that isn't a function.
+	throw "Calling a non function";
+}
 
 
 bool VariantBase::AsBool() const {
@@ -444,7 +449,7 @@ Variant& VarArray::Get( int i ) {
 	return( this->Value.at( i ) );
 }
 
-Variant& VarArray::Get( Variant v ) {
+Variant& VarArray::Get( const Variant v ) {
 	int i = v->AsInt();
 	return( this->Get( i ) );
 }
@@ -454,7 +459,7 @@ Variant VarArray::Set( int i, Variant v ) {
 	return( v );
 }
 
-Variant VarArray::Set( Variant key, Variant val ) {
+Variant VarArray::Set( const Variant key, Variant val ) {
 	this->Get( key ) = val;
 	return( val );
 }
@@ -463,11 +468,11 @@ bool VarArray::Add( Variant v ) {
 	this->Value.push_back( v );
 }
 
-bool VarArray::Insert( Variant v, int i ) {
+bool VarArray::Insert( const Variant v, int i ) {
 	this->Value.insert( this->Value.begin() + i, v );
 }
 
-bool VarArray::Insert( Variant v, Variant i ) {
+bool VarArray::Insert( const Variant v, Variant i ) {
 	this->Insert( v, i->AsInt() );
 }
 
@@ -476,7 +481,7 @@ bool VarArray::Remove( int i ) {
 	return( true );
 }
 
-bool VarArray::Remove( Variant i ) {
+bool VarArray::Remove( const Variant i ) {
 	int ind = i->AsInt();
 	this->Value.erase( this->Value.begin() + ind );
 	return( true );
@@ -512,11 +517,11 @@ bool VarMap::IsMap() const {
 	return( true );
 }
 
-Variant& VarMap::Get( Variant key ) {
+Variant& VarMap::Get( const Variant key ) {
 	return( this->Value.at( key ) );
 }
 
-Variant VarMap::Set( Variant key, Variant val ) {
+Variant VarMap::Set( const Variant key, Variant val ) {
 	if ( this->Value.find( key ) == this->Value.end() ) {
 		this->Add( key, val );
 	}
@@ -527,13 +532,13 @@ Variant VarMap::Set( Variant key, Variant val ) {
 	return( val );
 }
 
-bool VarMap::Add( Variant key, Variant val ) {
+bool VarMap::Add( const Variant key, Variant val ) {
 	this->Value.insert( std::pair<Variant, Variant>( key, val ) );
 	return( true );
 }
 
-bool VarMap::Remove( Variant key ) {
-	return( false );
+bool VarMap::Remove( const Variant key ) {
+	throw "Not Implemented";
 }
 
 Variant VarMap::Count() {
