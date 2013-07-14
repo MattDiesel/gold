@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-#include "../variant.h"
+#include "../variant/variant.h"
 #include "../symboltable.h"
 
 using namespace gold;

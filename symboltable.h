@@ -13,21 +13,22 @@
 
 namespace gold {
 
-
 class Symbol {
 public:
 	enum Flags {
 		NoFlags = 0,
 		Static = 1,
-		Const = 2
+		Const = 2,
+		Argument = 4
 	};
 
+	Symbol( );
 	Symbol( Variant );
 	Symbol( Variant, Flags );
 	~Symbol();
 
-	bool IsConst();
-	bool IsStatic();
+	bool IsConst() const;
+	bool IsStatic() const;
 
 	Flags flags;
 	Variant value;
@@ -35,6 +36,8 @@ public:
 
 class StackFrame {
 public:
+	typedef std::map<std::string, Symbol> SetType;
+
 	StackFrame();
 	~StackFrame();
 
@@ -42,9 +45,11 @@ public:
 	void Assign( const std::string&, Variant );
 	Variant& Eval( const std::string& );
 	Symbol& Get( const std::string& );
-	bool IsDeclared( const std::string& );
+	bool IsDeclared( const std::string& ) const;
 
-	std::map<std::string, Symbol> symbols;
+	void Leave();
+
+	SetType symbols;
 };
 
 
@@ -58,7 +63,7 @@ public:
 	void Assign( const std::string&, Variant );
 	Variant& Eval( const std::string& );
 	Symbol& Get( const std::string& );
-	bool IsDeclared( const std::string& );
+	bool IsDeclared( const std::string& ) const;
 
 	void Enter();
 	void Enter( StackFrame* );

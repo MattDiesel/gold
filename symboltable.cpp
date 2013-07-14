@@ -13,22 +13,28 @@ namespace gold {
 
 // class Symbol
 
-Symbol::Symbol( Variant v, Flags fl = NoFlags )
+Symbol::Symbol( )
+	: value( ), flags( NoFlags ) {
+}
+
+Symbol::Symbol( Variant v )
+	: value( v ), flags( NoFlags ) {
+}
+
+Symbol::Symbol( Variant v, Flags fl )
 	: value( v ), flags( fl ) {
 }
 
 Symbol::~Symbol() {
 }
 
-inline bool Symbol::IsConst() {
+bool Symbol::IsConst() const {
 	return( this->flags & Const );
 }
 
-inline bool Symbol::IsStatic() {
+bool Symbol::IsStatic() const {
 	return( this->flags & Static );
 }
-
-
 
 
 // class StackFrame
@@ -64,11 +70,26 @@ Variant& StackFrame::Eval( const std::string& name ) {
 }
 
 Symbol& StackFrame::Get( const std::string& name ) {
-	return( this->symbols.at( name ) );
+	StackFrame::SetType::iterator it = this->symbols.find( name );
+
+	if ( it == this->symbols.end() ) {
+		// Error: Symbol not found
+		throw "Symbol not found!";
+	}
+
+	return( (*it).second );
 }
 
-bool StackFrame::IsDeclared( const std::string& name ) {
+bool StackFrame::IsDeclared( const std::string& name ) const {
 	return( this->symbols.find( name ) != this->symbols.end() );
+}
+
+void StackFrame::Leave( ) {
+	for ( auto i = this->symbols.begin(); i != this->symbols.end(); ++i ) {
+		if ( !( (*i).second.flags & ( Symbol::Static | Symbol::Argument ) ) ) {
+			this->symbols.erase(i);
+		}
+	}
 }
 
 
@@ -125,7 +146,7 @@ Variant& SymbolTable::Eval( const std::string& name ) {
 	return( this->Get( name ).value );
 }
 
-bool SymbolTable::IsDeclared( const std::string& name ) {
+bool SymbolTable::IsDeclared( const std::string& name ) const {
 	for ( auto i = this->scopes.rbegin(); i != this->scopes.rend(); ++i ) {
 		if ( (*i)->IsDeclared( name ) ) {
 			return( true );
@@ -171,6 +192,8 @@ StackFrame* SymbolTable::LeaveFrame() {
 
 	StackFrame* ret = this->scopes.back();
 	this->scopes.pop_back();
+
+	ret->Leave();
 
 	return( ret );
 }
