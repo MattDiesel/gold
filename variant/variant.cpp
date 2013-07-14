@@ -510,11 +510,9 @@ Variant VarString::ToNumber() const {
 	return( Variant( new VarNumeric( d ) ) );
 }
 
-/// Compares two variants for equality as strings.
+/// Compares two variants for equality as strings (native version).
 /// Comparison is case insensitive.
-int VarString::Compare( const Variant& a, const Variant& b ) {
-	std::string s1 = a->AsString();
-	std::string s2 = b->AsString();
+int VarString::Compare( const std::string& s1, const std::string& s2 ) {
 	std::size_t l1 = s1.size();
 	std::size_t l2 = s2.size();
 	std::size_t rlen = std::min( l1, l2 );
@@ -525,6 +523,15 @@ int VarString::Compare( const Variant& a, const Variant& b ) {
 	}
 
 	return( ret );
+}
+
+/// Compares two variants for equality as strings.
+/// Comparison is case insensitive.
+int VarString::Compare( const Variant& a, const Variant& b ) {
+	std::string s1 = a->AsString();
+	std::string s2 = b->AsString();
+
+	return( VarString::Compare( s1, s2 ) );
 }
 
 

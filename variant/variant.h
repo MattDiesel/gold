@@ -353,6 +353,10 @@ public:
 	/// Non-numeric string values return zero.
 	virtual Variant ToNumber() const;
 
+	/// Compares two variants for equality as strings (native version).
+	/// Comparison is case insensitive.
+	static int Compare( const std::string&, const std::string& );
+
 	/// Compares two variants for equality as strings.
 	/// Comparison is case insensitive.
 	static int Compare( const Variant&, const Variant& );
