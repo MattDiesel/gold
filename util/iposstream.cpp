@@ -5,30 +5,30 @@
 // struct SourcePos
 
 SourcePos::SourcePos()
-	: SourcePos(0, 0, 0) {
+	: SourcePos( 0, 0, 0 ) {
 }
 
-SourcePos::SourcePos(int line, int col, int abs)
-	: SourcePos(line, col, abs, abs-col) {
+SourcePos::SourcePos( int line, int col, int abs )
+	: SourcePos( line, col, abs, abs - col ) {
 }
 
-SourcePos::SourcePos(int line, int col, int abs, int lineStart)
-	: Line(line), 
-	Column(col), 
-	Abs(abs), 
-	LineStart(lineStart) {
+SourcePos::SourcePos( int line, int col, int abs, int lineStart )
+	: Line( line ),
+	  Column( col ),
+	  Abs( abs ),
+	  LineStart( lineStart ) {
 }
 
-std::ostream& operator<<(std::ostream& os, const SourcePos& sp) {
-	return(os << sp.Line << ":" << sp.Column);
+std::ostream& operator<<( std::ostream& os, const SourcePos& sp ) {
+	return( os << sp.Line << ":" << sp.Column );
 }
 
 
 // class iposstream
 
 // Creates a positional stream based on an input stream.
-iposstream::iposstream(std::istream& base)
-	: basestream(base), Pos(0, 0, 0), next(1, 1, 1), TabWidth(1) {
+iposstream::iposstream( std::istream& base )
+	: basestream( base ), Pos( 0, 0, 0 ), next( 1, 1, 1 ), TabWidth( 1 ) {
 }
 
 iposstream::~iposstream() {
@@ -36,7 +36,7 @@ iposstream::~iposstream() {
 
 // reads the next character without extracting it
 int iposstream::peek() {
-	return(basestream.peek());
+	return( basestream.peek() );
 }
 
 // Extracts the next character from the stream, and increments the counters.
@@ -50,8 +50,8 @@ int iposstream::get() {
 
 	// Handle \r\n sequence, required when using windows line endings on a non
 	// windows operating system.
-	if (ret == '\r') {
-		if (this->peek() == '\n') {
+	if ( ret == '\r' ) {
+		if ( this->peek() == '\n' ) {
 			basestream.get();
 			this->next.Abs += 1;
 		}
@@ -61,12 +61,12 @@ int iposstream::get() {
 
 	// Eol characters are reported at the end of the line, rather than at the
 	// beginning of the next
-	if (ret == '\n') {
+	if ( ret == '\n' ) {
 		this->next.Line += 1;
 		this->next.Column = 1;
 		this->next.LineStart = this->next.Abs + 1;
 	}
-	else if (ret == '\t') { // Tab is not always counted as 1 character.
+	else if ( ret == '\t' ) { // Tab is not always counted as 1 character.
 		this->next.Abs += this->TabWidth - 1;
 		this->next.Column += this->TabWidth;
 	}
@@ -74,10 +74,10 @@ int iposstream::get() {
 		this->next.Column += 1;
 	}
 
-	return(ret);
+	return( ret );
 }
 
 // checks if end-of-file has been reached
 bool iposstream::eof() {
-	return(basestream.eof());
+	return( basestream.eof() );
 }

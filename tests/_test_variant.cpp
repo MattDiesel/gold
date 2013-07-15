@@ -8,7 +8,7 @@ using namespace gold;
 int main() {
 	Variant v; // New empty variant
 
-	v->Write(std::cout) << std::endl;
+	v->Write( std::cout ) << std::endl;
 
 	std::cout << v << std::endl;
 

@@ -129,7 +129,7 @@ Variant& Variant::operator=( VariantBase* bs ) {
 /// If used on a NULL variant, then this is
 ///   redrected to the empty string variant.
 VariantBase* Variant::operator->() {
-	if (!this->variant) {
+	if ( !this->variant ) {
 		return( VarEmptyStr.variant );
 	}
 
@@ -139,7 +139,7 @@ VariantBase* Variant::operator->() {
 /// Const version of the above.
 /// Allows const methods to be used on variants.
 const VariantBase* Variant::operator->() const {
-	if (!this->variant) {
+	if ( !this->variant ) {
 		return( VarEmptyStr.variant );
 	}
 

@@ -16,19 +16,18 @@ struct SourcePos {
 	int LineStart;
 
 	SourcePos();
-	SourcePos(int, int, int);
-	SourcePos(int, int, int, int);
+	SourcePos( int, int, int );
+	SourcePos( int, int, int, int );
 
-	friend std::ostream& operator<<(std::ostream&, const SourcePos&);
+	friend std::ostream& operator<<( std::ostream&, const SourcePos& );
 };
 
 
 // An input stream that also records character positions.
 // Todo: Make this into a fully featured stream class derived from std::istream
-class iposstream
-{
+class iposstream {
 public:
-	iposstream(std::istream&);
+	iposstream( std::istream& );
 	~iposstream();
 
 	int peek();
