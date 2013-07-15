@@ -13,38 +13,55 @@ namespace gold {
 
 // class Symbol
 
+/// Creates a new null symbol.
 Symbol::Symbol( )
 	: value( ), flags( NoFlags ) {
 }
 
+/// Creates a new symbol for the given variant
 Symbol::Symbol( Variant v )
 	: value( v ), flags( NoFlags ) {
 }
 
+/// Creates a new symbol for the given variant with the set flags
 Symbol::Symbol( Variant v, Flags fl )
 	: value( v ), flags( fl ) {
 }
 
+/// Symbol destructor.
 Symbol::~Symbol() {
 }
 
-bool Symbol::IsConst() const {
-	return( this->flags & Const );
-}
-
+/// Returns TRUE if the symbol is static, FALSE otherwise.
 bool Symbol::IsStatic() const {
 	return( this->flags & Static );
 }
 
+/// Returns TRUE if the symbol is a constant, FALSE otherwise.
+bool Symbol::IsConst() const {
+	return( this->flags & Const );
+}
+
+/// Returns TRUE if the symbol is an argument, FALSE otherwise.
+bool Symbol::IsArgument() const {
+	return( this->flags & Argument );
+}
+
+
 
 // class StackFrame
+
+
+/// Initializes a new, empty, stack frame structure.
 StackFrame::StackFrame() {
 }
 
+/// Destructor for a stack frame
 StackFrame::~StackFrame() {
 }
 
 
+/// Defines a variable on this stack frame
 void StackFrame::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
 	if ( this->IsDeclared( name ) ) {
 		// Error: Already defined in scope
@@ -54,6 +71,7 @@ void StackFrame::Define( const std::string& name, Variant var, Symbol::Flags fla
 	this->symbols.insert( std::pair<std::string, Symbol>( name, Symbol( var, flags ) ) );
 }
 
+/// Assigns a value to a symbol on this stack frame
 void StackFrame::Assign( const std::string& name, Variant var ) {
 	Symbol& v = this->Get( name );
 
@@ -65,10 +83,12 @@ void StackFrame::Assign( const std::string& name, Variant var ) {
 	v.value = var;
 }
 
+/// Gets the value of a symbol on this stack frame
 Variant& StackFrame::Eval( const std::string& name ) {
 	return( this->Get( name ).value );
 }
 
+/// Gets a reference to a symbol on this stack frame.
 Symbol& StackFrame::Get( const std::string& name ) {
 	StackFrame::SetType::iterator it = this->symbols.find( name );
 
@@ -77,17 +97,19 @@ Symbol& StackFrame::Get( const std::string& name ) {
 		throw "Symbol not found!";
 	}
 
-	return( (*it).second );
+	return( ( *it ).second );
 }
 
+/// Checks if a symbol is declrared
 bool StackFrame::IsDeclared( const std::string& name ) const {
 	return( this->symbols.find( name ) != this->symbols.end() );
 }
 
+/// Leaves the stack frame.
 void StackFrame::Leave( ) {
 	for ( auto i = this->symbols.begin(); i != this->symbols.end(); ++i ) {
-		if ( !( (*i).second.flags & ( Symbol::Static | Symbol::Argument ) ) ) {
-			this->symbols.erase(i);
+		if ( !( ( *i ).second.flags & ( Symbol::Static | Symbol::Argument ) ) ) {
+			this->symbols.erase( i );
 		}
 	}
 }
@@ -97,13 +119,16 @@ void StackFrame::Leave( ) {
 
 // class SymbolTable
 
-SymbolTable::SymbolTable() {
+SymbolTable::SymbolTable()
+		: topScope( nullptr ) {
 	this->globalScope = new StackFrame();
 }
 
 SymbolTable::~SymbolTable() {
-	for ( auto i = this->scopes.rbegin(); i != this->scopes.rend(); ++i ) {
-		delete *i;
+	StackFrame* s;
+	for ( StackFrame* f = this->topScope; f; f = s ) {
+		s = f->tail;
+		delete f;
 	}
 
 	delete this->globalScope;
@@ -114,11 +139,11 @@ void SymbolTable::Define( const std::string& name, Variant var ) {
 }
 
 void SymbolTable::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
-	if (this->scopes.empty()) {
+	if ( !this->topScope ) {
 		this->globalScope->Define( name, var, flags );
 	}
 	else {
-		this->scopes.back()->Define( name, var, flags );
+		this->topScope->Define( name, var, flags );
 	}
 }
 
@@ -128,9 +153,9 @@ void SymbolTable::Assign( const std::string& name, Variant var ) {
 }
 
 Symbol& SymbolTable::Get( const std::string& name ) {
-	for ( auto i = this->scopes.rbegin(); i != this->scopes.rend(); ++i ) {
-		if ( (*i)->IsDeclared( name ) ) {
-			return( (*i)->Get( name ) );
+	for ( StackFrame* f = this->topScope; f; f = f->tail ) {
+		if ( f->IsDeclared( name ) ) {
+			return( f->Get( name ) );
 		}
 	}
 
@@ -147,8 +172,8 @@ Variant& SymbolTable::Eval( const std::string& name ) {
 }
 
 bool SymbolTable::IsDeclared( const std::string& name ) const {
-	for ( auto i = this->scopes.rbegin(); i != this->scopes.rend(); ++i ) {
-		if ( (*i)->IsDeclared( name ) ) {
+	for ( StackFrame* f = this->topScope; f; f = f->tail ) {
+		if ( f->IsDeclared( name ) ) {
 			return( true );
 		}
 	}
@@ -167,35 +192,31 @@ void SymbolTable::Enter( StackFrame* frame ) {
 	// 	throw "Stack Overflow";
 	// }
 
-	if (!frame) {
+	if ( !frame ) {
 		frame = new StackFrame();
 	}
 
-	this->scopes.push_back( frame );
+	frame->tail = this->topScope;
+	this->topScope = frame;
 }
 
 void SymbolTable::Leave() {
-	if ( this->scopes.empty() ) {
-		// Error: At global scope
-		throw "Stack empty";
-	}
-
-	delete this->scopes.back();
-	this->scopes.pop_back();
+	StackFrame* f = this->LeaveFrame( );
+	delete f;
 }
 
 StackFrame* SymbolTable::LeaveFrame() {
-	if ( this->scopes.empty() ) {
+	if ( !this->topScope ) {
 		// Error: At global scope
 		throw "Stack empty";
 	}
 
-	StackFrame* ret = this->scopes.back();
-	this->scopes.pop_back();
+	StackFrame* top = this->topScope;
+	this->topScope = top->tail;
 
-	ret->Leave();
+	top->Leave();
 
-	return( ret );
+	return( top );
 }
 
 
