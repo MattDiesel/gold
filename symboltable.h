@@ -62,28 +62,39 @@ public:
 	~StackFrame();
 
 	/// Defines a variable on this stack frame
-	void Define( const std::string&, Variant, Symbol::Flags );
+	virtual void Define( const std::string&, Variant, Symbol::Flags );
 
 	/// Assigns a value to a symbol on this stack frame
-	void Assign( const std::string&, Variant );
+	virtual void Assign( const std::string&, Variant );
 
 	/// Gets the value of a symbol on this stack frame
-	Variant& Eval( const std::string& );
+	virtual Variant& Eval( const std::string& );
 
 	/// Gets a reference to a symbol on this stack frame.
-	Symbol& Get( const std::string& );
+	virtual Symbol& Get( const std::string& );
 
 	/// Checks if a symbol is declrared
-	bool IsDeclared( const std::string& ) const;
+	virtual bool IsDeclared( const std::string& ) const;
 
 	/// Leaves the stack frame.
 	/// This removes any symbols that are not static or arguments.
-	void Leave();
+	virtual void Leave();
 
 	SetType symbols;
 	StackFrame* tail;
+
+	// Debug functions
+
 };
 
+class FunctionFrame : public StackFrame
+{
+public:
+	FunctionFrame(std::string);
+	~FunctionFrame();
+
+
+};
 
 /// A symbol table.
 class SymbolTable {

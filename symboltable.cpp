@@ -53,7 +53,8 @@ bool Symbol::IsArgument() const {
 
 
 /// Initializes a new, empty, stack frame structure.
-StackFrame::StackFrame() {
+StackFrame::StackFrame()
+		: tail( nullptr ) {
 }
 
 /// Destructor for a stack frame
@@ -63,7 +64,9 @@ StackFrame::~StackFrame() {
 
 /// Defines a variable on this stack frame
 void StackFrame::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
-	if ( this->IsDeclared( name ) ) {
+	StackFrame::SetType::const_iterator it = this->symbols.find( name );
+
+	if ( it != this->symbols.end() ) {
 		// Error: Already defined in scope
 		throw "Already defined in scope";
 	}
@@ -93,8 +96,12 @@ Symbol& StackFrame::Get( const std::string& name ) {
 	StackFrame::SetType::iterator it = this->symbols.find( name );
 
 	if ( it == this->symbols.end() ) {
-		// Error: Symbol not found
-		throw "Symbol not found!";
+		if ( !this->tail ) {
+			// Error: Symbol not found
+			throw "Symbol not found!";
+		}
+
+		return( this->tail->Get( name ) );
 	}
 
 	return( ( *it ).second );
@@ -102,16 +109,26 @@ Symbol& StackFrame::Get( const std::string& name ) {
 
 /// Checks if a symbol is declrared
 bool StackFrame::IsDeclared( const std::string& name ) const {
-	return( this->symbols.find( name ) != this->symbols.end() );
+	StackFrame::SetType::const_iterator it = this->symbols.find( name );
+
+	if ( it != this->symbols.end() ) {
+		if ( !this->tail ) {
+			return( false );
+		}
+
+		return( this->tail->IsDeclared( name ) );
+	}
+
+	return( true );
 }
 
 /// Leaves the stack frame.
 void StackFrame::Leave( ) {
-	for ( auto i = this->symbols.begin(); i != this->symbols.end(); ++i ) {
-		if ( !( ( *i ).second.flags & ( Symbol::Static | Symbol::Argument ) ) ) {
-			this->symbols.erase( i );
-		}
-	}
+	// for ( auto i = this->symbols.begin(); i != this->symbols.end(); ++i ) {
+	// 	if ( !( ( *i ).second.flags & ( Symbol::Static | Symbol::Argument ) ) ) {
+	// 		this->symbols.erase( i );
+	// 	}
+	// }
 }
 
 
@@ -120,9 +137,9 @@ void StackFrame::Leave( ) {
 // class SymbolTable
 
 /// Creates a new, empty, symbol table
-SymbolTable::SymbolTable()
-		: topScope( nullptr ) {
+SymbolTable::SymbolTable() {
 	this->globalScope = new StackFrame();
+	this->topScope = this->globalScope;
 }
 
 /// Symbol table destructor.
@@ -132,8 +149,6 @@ SymbolTable::~SymbolTable() {
 		s = f->tail;
 		delete f;
 	}
-
-	delete this->globalScope;
 }
 
 /// Defines a new symbol, on the top stack frame
@@ -159,18 +174,7 @@ void SymbolTable::Assign( const std::string& name, Variant var ) {
 
 /// Evaluates a symbol in the table.
 Symbol& SymbolTable::Get( const std::string& name ) {
-	for ( StackFrame* f = this->topScope; f; f = f->tail ) {
-		if ( f->IsDeclared( name ) ) {
-			return( f->Get( name ) );
-		}
-	}
-
-	if ( this->globalScope->IsDeclared( name ) ) {
-		return( this->globalScope->Get( name ) );
-	}
-
-	// Error: Variable not declared.
-	throw "Variable not declared";
+	return( this->topScope->Get( name ) );
 }
 
 /// Gets a symbol in the table.
@@ -180,13 +184,7 @@ Variant& SymbolTable::Eval( const std::string& name ) {
 
 /// Checks if a symbol is declared
 bool SymbolTable::IsDeclared( const std::string& name ) const {
-	for ( StackFrame* f = this->topScope; f; f = f->tail ) {
-		if ( f->IsDeclared( name ) ) {
-			return( true );
-		}
-	}
-
-	return( false );
+	return( this->topScope->IsDeclared( name ) );
 }
 
 /// Enters into a new empty stack frame
@@ -218,7 +216,7 @@ void SymbolTable::Leave() {
 
 /// Leaves a stack frame and returns it.
 StackFrame* SymbolTable::LeaveFrame() {
-	if ( !this->topScope ) {
+	if ( this->topScope == this->globalScope ) {
 		// Error: At global scope
 		throw "Stack empty";
 	}
