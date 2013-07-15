@@ -119,11 +119,13 @@ void StackFrame::Leave( ) {
 
 // class SymbolTable
 
+/// Creates a new, empty, symbol table
 SymbolTable::SymbolTable()
 		: topScope( nullptr ) {
 	this->globalScope = new StackFrame();
 }
 
+/// Symbol table destructor.
 SymbolTable::~SymbolTable() {
 	StackFrame* s;
 	for ( StackFrame* f = this->topScope; f; f = s ) {
@@ -134,10 +136,12 @@ SymbolTable::~SymbolTable() {
 	delete this->globalScope;
 }
 
+/// Defines a new symbol, on the top stack frame
 void SymbolTable::Define( const std::string& name, Variant var ) {
 	this->Define( name, var, Symbol::NoFlags );
 }
 
+/// Defines a new symbol, on the top stack frame
 void SymbolTable::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
 	if ( !this->topScope ) {
 		this->globalScope->Define( name, var, flags );
@@ -147,11 +151,13 @@ void SymbolTable::Define( const std::string& name, Variant var, Symbol::Flags fl
 	}
 }
 
+/// Assigns a value to a symbol in the table.
 void SymbolTable::Assign( const std::string& name, Variant var ) {
 	Symbol& s = this->Get( name );
 	s.value = var;
 }
 
+/// Evaluates a symbol in the table.
 Symbol& SymbolTable::Get( const std::string& name ) {
 	for ( StackFrame* f = this->topScope; f; f = f->tail ) {
 		if ( f->IsDeclared( name ) ) {
@@ -167,10 +173,12 @@ Symbol& SymbolTable::Get( const std::string& name ) {
 	throw "Variable not declared";
 }
 
+/// Gets a symbol in the table.
 Variant& SymbolTable::Eval( const std::string& name ) {
 	return( this->Get( name ).value );
 }
 
+/// Checks if a symbol is declared
 bool SymbolTable::IsDeclared( const std::string& name ) const {
 	for ( StackFrame* f = this->topScope; f; f = f->tail ) {
 		if ( f->IsDeclared( name ) ) {
@@ -181,10 +189,12 @@ bool SymbolTable::IsDeclared( const std::string& name ) const {
 	return( false );
 }
 
+/// Enters into a new empty stack frame
 void SymbolTable::Enter() {
 	this->Enter( nullptr );
 }
 
+/// Enters into a new stack frame
 void SymbolTable::Enter( StackFrame* frame ) {
 	// if ( SymbolTable::MaxStack &&
 	// 	 this->scopes.size() >= SymbolTable::MaxStack ) {
@@ -200,11 +210,13 @@ void SymbolTable::Enter( StackFrame* frame ) {
 	this->topScope = frame;
 }
 
+/// Leaves a stack frame and deletes it
 void SymbolTable::Leave() {
 	StackFrame* f = this->LeaveFrame( );
 	delete f;
 }
 
+/// Leaves a stack frame and returns it.
 StackFrame* SymbolTable::LeaveFrame() {
 	if ( !this->topScope ) {
 		// Error: At global scope
