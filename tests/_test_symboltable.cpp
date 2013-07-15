@@ -8,16 +8,25 @@
 using namespace gold;
 
 int main() {
+	SymbolTable tbl;
+
 	try {
-		SymbolTable tbl;
 
 		tbl.Define( "Foo", Variant( "FooGlobal" ) );
 
 		// FooGlobal
 		std::cout << tbl.Eval( "Foo" ) << std::endl;
 
+
 		std::cout << "Entering scope" << std::endl;
-		tbl.Enter();
+		tbl.Enter( );
+
+
+		tbl.Define( "Test", Variant( "TestValue" ) );
+
+
+		std::cout << "Entering scope" << std::endl;
+		tbl.Enter( new FunctionFrame( "FooBar" ) );
 
 		tbl.Define( "Bar", Variant( "BarValue" ) );
 		tbl.Define( "Foo", Variant( "FooLocal" ) );
@@ -27,6 +36,12 @@ int main() {
 
 		// BarValue
 		std::cout << tbl.Eval( "Bar" ) << std::endl;
+
+		// BarValue
+		std::cout << tbl.Eval( "Test" ) << std::endl;
+
+		std::cout << "Leaving scope" << std::endl;
+		tbl.Leave();
 
 		std::cout << "Leaving scope" << std::endl;
 		tbl.Leave();
@@ -38,7 +53,8 @@ int main() {
 		std::cout << tbl.Eval( "Bar" ) << std::endl;
 	}
 	catch ( const char* s ) {
-		std::cerr << s << std::endl;
+		std::cerr << s << std::endl << "Back trace: " << std::endl;
+		tbl.BackTrace(std::cerr);
 	}
 
 	return 0;

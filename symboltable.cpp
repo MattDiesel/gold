@@ -131,6 +131,82 @@ void StackFrame::Leave( ) {
 	// }
 }
 
+void StackFrame::BackTraceLine(std::ostream& os, int count, int limit) const {
+	os << count << ". Stack Frame" << std::endl;
+
+	if (count < limit && this->tail) {
+		this->tail->BackTraceLine(os, count + 1, limit);
+	}
+}
+
+
+// class FunctionFrame
+
+/// Creates a new stack frame for a function
+FunctionFrame::FunctionFrame( std::string s )
+		: funcName( s ) {
+}
+
+/// Function stack frame destructor
+FunctionFrame::~FunctionFrame() {
+}
+
+/// Gets a reference to a symbol on this stack frame.
+Symbol& FunctionFrame::Get( const std::string& name ) {
+	StackFrame::SetType::iterator it = this->symbols.find( name );
+
+	if ( it == this->symbols.end() ) {
+		if ( !this->tail ) {
+			// Error: Symbol not found
+			throw "Symbol not found!";
+		}
+
+		// Skip to bottom frame.
+
+		StackFrame* bottom = this->tail;
+
+		while (bottom->tail) {
+			bottom = bottom->tail;
+		}
+
+		return( bottom->Get( name ) );
+	}
+
+	return( ( *it ).second );
+}
+
+/// Checks if a symbol is declrared
+bool FunctionFrame::IsDeclared( const std::string& name ) const {
+	StackFrame::SetType::const_iterator it = this->symbols.find( name );
+
+	if ( it != this->symbols.end() ) {
+		if ( !this->tail ) {
+			return( false );
+		}
+
+		// Skip to bottom frame.
+
+		StackFrame* bottom = this->tail;
+
+		while (bottom->tail) {
+			bottom = bottom->tail;
+		}
+
+		return( bottom->IsDeclared( name ) );
+	}
+
+	return( true );
+}
+
+/// Prints this stack frames line in a back trace.
+void FunctionFrame::BackTraceLine(std::ostream& os, int count, int limit) const {
+	os << count << ". Function '" << this->funcName << "'" << std::endl;
+
+	if (count < limit && this->tail) {
+		this->tail->BackTraceLine(os, count + 1, limit);
+	}
+}
+
 
 
 
@@ -229,5 +305,10 @@ StackFrame* SymbolTable::LeaveFrame() {
 	return( top );
 }
 
+
+/// Prints a back trace of the last 5 stack frames.
+void SymbolTable::BackTrace(std::ostream& os) const {
+	this->topScope->BackTraceLine( os, 1, 5 );
+}
 
 } // namespace gold

@@ -80,20 +80,38 @@ public:
 	/// This removes any symbols that are not static or arguments.
 	virtual void Leave();
 
+	// Debug functions ------------------------------------
+
+	/// Prints this stack frames line in a back trace.
+	virtual void BackTraceLine(std::ostream&, int, int) const;
+
 	SetType symbols;
 	StackFrame* tail;
-
-	// Debug functions
-
 };
 
+
+/// A scope on the stack for a function
 class FunctionFrame : public StackFrame
 {
 public:
+	/// Creates a new stack frame for a function
 	FunctionFrame(std::string);
+
+	/// Function stack frame destructor
 	~FunctionFrame();
 
+	/// Gets a reference to a symbol on this stack frame.
+	virtual Symbol& Get( const std::string& );
 
+	/// Checks if a symbol is declrared
+	virtual bool IsDeclared( const std::string& ) const;
+
+	// Debug functions ------------------------------------
+
+	/// Prints this stack frames line in a back trace.
+	virtual void BackTraceLine(std::ostream&, int, int) const;
+
+	std::string funcName;
 };
 
 /// A symbol table.
@@ -140,7 +158,9 @@ public:
 	StackFrame* topScope;
 
 	// Debug functions
-	// Todo: Stack unrolling
+
+	/// Prints a back trace of the last 5 stack frames.
+	void BackTrace(std::ostream&) const;
 };
 
 
