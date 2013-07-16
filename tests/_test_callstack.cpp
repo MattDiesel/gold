@@ -3,7 +3,8 @@
 #include <string>
 
 #include "../variant/variant.h"
-#include "../callstack/callstack.h"
+#include "../callstack/stackframe.h"
+#include "../callstack/functionframe.h"
 
 using namespace gold;
 
