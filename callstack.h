@@ -61,6 +61,12 @@ public:
 	/// Destructor for a stack frame
 	~StackFrame();
 
+
+	// Symbol functions -----------------------------------
+
+	/// Defines a variable on this stack frame
+	void Define( const std::string&, Variant );
+
 	/// Defines a variable on this stack frame
 	virtual void Define( const std::string&, Variant, Symbol::Flags );
 
@@ -76,14 +82,39 @@ public:
 	/// Checks if a symbol is declrared
 	virtual bool IsDeclared( const std::string& ) const;
 
+
+	// Stack functions ------------------------------------
+
+	/// Enters a new, empty, frame onto the stack
+	StackFrame* Enter();
+
+	/// Enters a new frame onto the stack
+	virtual StackFrame* Enter( StackFrame* );
+
 	/// Leaves the stack frame.
-	/// This removes any symbols that are not static or arguments.
-	virtual void Leave();
+	virtual StackFrame* Leave();
+
+
+	// Jump functions -------------------------------------
+	// These only do the stack management part of these operations.
+
+	/// Exits N levels of loop
+	virtual StackFrame* ExitLoop(int);
+
+	/// Continues N levels of loop
+	virtual StackFrame* ContinueLoop(int);
+
+	/// Returns from a function
+	virtual StackFrame* Return();
+
 
 	// Debug functions ------------------------------------
 
+	/// Calls the next frames BackTrace
+	virtual void BackTrace(std::ostream&, int, int) const;
+
 	/// Prints this stack frames line in a back trace.
-	virtual void BackTraceLine(std::ostream&, int, int) const;
+	virtual void ScopeTrace(std::ostream&, int, int) const;
 
 	SetType symbols;
 	StackFrame* tail;
@@ -91,8 +122,7 @@ public:
 
 
 /// A scope on the stack for a function
-class FunctionFrame : public StackFrame
-{
+class FunctionFrame : public StackFrame {
 public:
 	/// Creates a new stack frame for a function
 	FunctionFrame(std::string);
@@ -100,67 +130,66 @@ public:
 	/// Function stack frame destructor
 	~FunctionFrame();
 
+	// Symbol functions -----------------------------------
+
 	/// Gets a reference to a symbol on this stack frame.
 	virtual Symbol& Get( const std::string& );
 
 	/// Checks if a symbol is declrared
 	virtual bool IsDeclared( const std::string& ) const;
 
+	// Stack functions ------------------------------------
+
+	/// Leaves the stack frame.
+	virtual StackFrame* Leave();
+
+	// Jump functions -------------------------------------
+	// These only do the stack management part of these operations.
+
+	/// Throws an error, as there is no loop remaining.
+	virtual StackFrame* ExitLoop(int);
+
+	/// Throws an error, as there is no loop remaining.
+	virtual StackFrame* ContinueLoop(int);
+
+	/// Returns from the function
+	virtual StackFrame* Return();
+
 	// Debug functions ------------------------------------
 
 	/// Prints this stack frames line in a back trace.
-	virtual void BackTraceLine(std::ostream&, int, int) const;
+	virtual void BackTrace(std::ostream&, int, int) const;
 
+	/// Prints this stack frames line in a back trace.
+	virtual void ScopeTrace(std::ostream&, int, int) const;
+
+private:
 	std::string funcName;
 };
 
-/// A symbol table.
-class CallStack {
+
+/// Generic class for loop scopes on the stack
+class LoopFrame : public StackFrame {
 public:
-	/// Creates a new, empty, symbol table
-	CallStack();
+	/// Creates a new stack frame for a loop
+	LoopFrame();
 
-	/// Symbol table destructor.
-	~CallStack();
+	/// Loop stack frame destructor
+	~LoopFrame();
 
-	/// Defines a new symbol, on the top stack frame
-	void Define( const std::string&, Variant );
+	// Jump functions -------------------------------------
+	// These only do the stack management part of these operations.
 
-	/// Defines a new symbol, on the top stack frame
-	void Define( const std::string&, Variant, Symbol::Flags );
+	/// Exits the loop
+	virtual StackFrame* ExitLoop(int);
 
-	/// Assigns a value to a symbol in the table.
-	void Assign( const std::string&, Variant );
+	/// Continues the loop
+	virtual StackFrame* ContinueLoop(int);
 
-	/// Evaluates a symbol in the table.
-	Variant& Eval( const std::string& );
+	// Debug functions ------------------------------------
 
-	/// Gets a symbol in the table.
-	Symbol& Get( const std::string& );
-
-	/// Checks if a symbol is declared
-	bool IsDeclared( const std::string& ) const;
-
-	/// Enters into a new empty stack frame
-	void Enter();
-
-	/// Enters into a new stack frame
-	void Enter( StackFrame* );
-
-	/// Leaves a stack frame and deletes it
-	void Leave();
-
-	/// Leaves a stack frame and returns it.
-	StackFrame* LeaveFrame();
-
-
-	StackFrame* globalScope;
-	StackFrame* topScope;
-
-	// Debug functions
-
-	/// Prints a back trace of the last 5 stack frames.
-	void BackTrace(std::ostream&) const;
+	/// Prints this stack frames line in a back trace.
+	virtual void ScopeTrace(std::ostream&, int, int) const;
 };
 
 

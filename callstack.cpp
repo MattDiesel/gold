@@ -63,6 +63,11 @@ StackFrame::~StackFrame() {
 
 
 /// Defines a variable on this stack frame
+void StackFrame::Define( const std::string& name, Variant var ) {
+	this->Define( name, var, Symbol::NoFlags );
+}
+
+/// Defines a variable on this stack frame
 void StackFrame::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
 	StackFrame::SetType::const_iterator it = this->symbols.find( name );
 
@@ -122,20 +127,72 @@ bool StackFrame::IsDeclared( const std::string& name ) const {
 	return( true );
 }
 
-/// Leaves the stack frame.
-void StackFrame::Leave( ) {
-	// for ( auto i = this->symbols.begin(); i != this->symbols.end(); ++i ) {
-	// 	if ( !( ( *i ).second.flags & ( Symbol::Static | Symbol::Argument ) ) ) {
-	// 		this->symbols.erase( i );
-	// 	}
-	// }
+
+StackFrame* StackFrame::Enter( ) {
+	return( this->Enter( nullptr ) );
 }
 
-void StackFrame::BackTraceLine(std::ostream& os, int count, int limit) const {
-	os << count << ". Stack Frame" << std::endl;
+StackFrame* StackFrame::Enter( StackFrame* fr ) {
+	if ( !fr ) {
+		fr = new StackFrame( );
+	}
 
-	if (count < limit && this->tail) {
-		this->tail->BackTraceLine(os, count + 1, limit);
+	fr->tail = this;
+	return( fr );
+}
+
+
+/// Leaves the stack frame.
+StackFrame* StackFrame::Leave( ) {
+	StackFrame* top = this->tail;
+	delete this;
+	return( top );
+}
+
+
+/// Exits N levels of loop
+StackFrame* StackFrame::ExitLoop(int level) {
+	if ( !this->tail ) {
+		// Error: ExitLoop statement has no matching loop
+		throw "ExitLoop statement has no matching loop";
+	}
+
+	return( this->Leave() );
+}
+
+/// Continues N levels of loop
+StackFrame* StackFrame::ContinueLoop(int level) {
+	if ( !this->tail ) {
+		// Error: ExitLoop statement has no matching loop
+		throw "ExitLoop statement has no matching loop";
+	}
+
+	return( this->Leave() );
+}
+
+/// Returns from a function
+StackFrame* StackFrame::Return() {
+	if ( !this->tail ) {
+		// Error: Return statement not in function
+		throw "Return statement not in function";
+	}
+
+	return( this->Leave() );
+}
+
+/// Calls the next frames BackTrace
+void StackFrame::BackTrace(std::ostream& os, int count, int limit) const {
+	if ( this->tail ) {
+		this->tail->BackTrace(os, count, limit);
+	}
+}
+
+/// Prints this stack frames line in a back trace.
+void StackFrame::ScopeTrace(std::ostream& os, int count, int limit) const {
+	os << count << ". Stack frame" << std::endl;
+
+	if ( count < limit && this->tail ) {
+		this->tail->ScopeTrace(os, count + 1, limit);
 	}
 }
 
@@ -188,7 +245,7 @@ bool FunctionFrame::IsDeclared( const std::string& name ) const {
 
 		StackFrame* bottom = this->tail;
 
-		while (bottom->tail) {
+		while ( bottom->tail ) {
 			bottom = bottom->tail;
 		}
 
@@ -198,117 +255,86 @@ bool FunctionFrame::IsDeclared( const std::string& name ) const {
 	return( true );
 }
 
+/// Leaves the stack frame.
+StackFrame* FunctionFrame::Leave( ) {
+	for ( auto i = this->symbols.begin(); i != this->symbols.end(); ++i ) {
+		if ( !( ( *i ).second.flags & ( Symbol::Static | Symbol::Argument ) ) ) {
+			this->symbols.erase( i );
+		}
+	}
+
+	StackFrame* ret = this->tail;
+	this->tail = nullptr;
+	return( ret );
+}
+
+
+/// Throws an error, as there is no loop remaining.
+StackFrame* FunctionFrame::ExitLoop( int level ) {
+	// Error: ExitLoop statement has no matching loop
+	throw "ExitLoop statement has no matching loop";
+}
+
+/// Throws an error, as there is no loop remaining.
+StackFrame* FunctionFrame::ContinueLoop( int level ) {
+	// Error: ContinueLoop statement has no matching loop
+	throw "ContinueLoop statement has no matching loop";
+}
+
+/// Returns from the function
+StackFrame* FunctionFrame::Return() {
+	return( this->Leave() );
+}
+
+
 /// Prints this stack frames line in a back trace.
-void FunctionFrame::BackTraceLine(std::ostream& os, int count, int limit) const {
+void FunctionFrame::BackTrace( std::ostream& os, int count, int limit ) const {
 	os << count << ". Function '" << this->funcName << "'" << std::endl;
 
-	if (count < limit && this->tail) {
-		this->tail->BackTraceLine(os, count + 1, limit);
+	if ( count < limit && this->tail ) {
+		this->tail->BackTrace(os, count + 1, limit);
 	}
 }
 
 
+/// Prints this stack frames line in a back trace.
+void FunctionFrame::ScopeTrace( std::ostream& os, int count, int limit ) const {
+	os << count << ". Function '" << this->funcName << "'" << std::endl;
 
-
-// class CallStack
-
-/// Creates a new, empty, symbol table
-CallStack::CallStack() {
-	this->globalScope = new StackFrame();
-	this->topScope = this->globalScope;
-}
-
-/// Symbol table destructor.
-CallStack::~CallStack() {
-	StackFrame* s;
-	for ( StackFrame* f = this->topScope; f; f = s ) {
-		s = f->tail;
-		delete f;
+	if ( count < limit && this->tail ) {
+		this->tail->ScopeTrace( os, count + 1, limit );
 	}
 }
 
-/// Defines a new symbol, on the top stack frame
-void CallStack::Define( const std::string& name, Variant var ) {
-	this->Define( name, var, Symbol::NoFlags );
+
+// class LoopFrame
+
+/// Creates a new stack frame for a loop
+LoopFrame::LoopFrame() {
 }
 
-/// Defines a new symbol, on the top stack frame
-void CallStack::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
-	if ( !this->topScope ) {
-		this->globalScope->Define( name, var, flags );
+/// Loop stack frame destructor
+LoopFrame::~LoopFrame() {
+}
+
+/// Exits the loop
+StackFrame* LoopFrame::ExitLoop( int level ) {
+	return( this->Leave() );
+}
+
+/// Continues the loop
+StackFrame* LoopFrame::ContinueLoop( int level ) {
+	return( this->Leave() );
+}
+
+/// Prints this stack frames line in a back trace.
+void LoopFrame::ScopeTrace( std::ostream& os, int count, int limit ) const {
+	os << count << ". Loop Frame" << std::endl;
+
+	if ( count < limit && this->tail ) {
+		this->tail->ScopeTrace( os, count + 1, limit );
 	}
-	else {
-		this->topScope->Define( name, var, flags );
-	}
 }
 
-/// Assigns a value to a symbol in the table.
-void CallStack::Assign( const std::string& name, Variant var ) {
-	Symbol& s = this->Get( name );
-	s.value = var;
-}
-
-/// Evaluates a symbol in the table.
-Symbol& CallStack::Get( const std::string& name ) {
-	return( this->topScope->Get( name ) );
-}
-
-/// Gets a symbol in the table.
-Variant& CallStack::Eval( const std::string& name ) {
-	return( this->Get( name ).value );
-}
-
-/// Checks if a symbol is declared
-bool CallStack::IsDeclared( const std::string& name ) const {
-	return( this->topScope->IsDeclared( name ) );
-}
-
-/// Enters into a new empty stack frame
-void CallStack::Enter() {
-	this->Enter( nullptr );
-}
-
-/// Enters into a new stack frame
-void CallStack::Enter( StackFrame* frame ) {
-	// if ( CallStack::MaxStack &&
-	// 	 this->scopes.size() >= CallStack::MaxStack ) {
-	// 	// Error: Stack overflow
-	// 	throw "Stack Overflow";
-	// }
-
-	if ( !frame ) {
-		frame = new StackFrame();
-	}
-
-	frame->tail = this->topScope;
-	this->topScope = frame;
-}
-
-/// Leaves a stack frame and deletes it
-void CallStack::Leave() {
-	StackFrame* f = this->LeaveFrame( );
-	delete f;
-}
-
-/// Leaves a stack frame and returns it.
-StackFrame* CallStack::LeaveFrame() {
-	if ( this->topScope == this->globalScope ) {
-		// Error: At global scope
-		throw "Stack empty";
-	}
-
-	StackFrame* top = this->topScope;
-	this->topScope = top->tail;
-
-	top->Leave();
-
-	return( top );
-}
-
-
-/// Prints a back trace of the last 5 stack frames.
-void CallStack::BackTrace(std::ostream& os) const {
-	this->topScope->BackTraceLine( os, 1, 5 );
-}
 
 } // namespace gold
