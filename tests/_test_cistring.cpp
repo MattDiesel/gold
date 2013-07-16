@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "cistring.h"
+#include "../util/cistring.h"
 
 
 int main( int argc, char const* argv[] ) {

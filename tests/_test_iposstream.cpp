@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "iposstream.h"
+#include "../util/iposstream.h"
 
 
 void Assert_AtPos( iposstream& st, char c, int line, int col ) {
