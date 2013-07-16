@@ -6,7 +6,7 @@
 #include "util/cistring.h"
 #include "variant/variant.h"
 
-#include "symboltable.h"
+#include "callstack.h"
 
 namespace gold {
 
@@ -210,16 +210,16 @@ void FunctionFrame::BackTraceLine(std::ostream& os, int count, int limit) const 
 
 
 
-// class SymbolTable
+// class CallStack
 
 /// Creates a new, empty, symbol table
-SymbolTable::SymbolTable() {
+CallStack::CallStack() {
 	this->globalScope = new StackFrame();
 	this->topScope = this->globalScope;
 }
 
 /// Symbol table destructor.
-SymbolTable::~SymbolTable() {
+CallStack::~CallStack() {
 	StackFrame* s;
 	for ( StackFrame* f = this->topScope; f; f = s ) {
 		s = f->tail;
@@ -228,12 +228,12 @@ SymbolTable::~SymbolTable() {
 }
 
 /// Defines a new symbol, on the top stack frame
-void SymbolTable::Define( const std::string& name, Variant var ) {
+void CallStack::Define( const std::string& name, Variant var ) {
 	this->Define( name, var, Symbol::NoFlags );
 }
 
 /// Defines a new symbol, on the top stack frame
-void SymbolTable::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
+void CallStack::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
 	if ( !this->topScope ) {
 		this->globalScope->Define( name, var, flags );
 	}
@@ -243,35 +243,35 @@ void SymbolTable::Define( const std::string& name, Variant var, Symbol::Flags fl
 }
 
 /// Assigns a value to a symbol in the table.
-void SymbolTable::Assign( const std::string& name, Variant var ) {
+void CallStack::Assign( const std::string& name, Variant var ) {
 	Symbol& s = this->Get( name );
 	s.value = var;
 }
 
 /// Evaluates a symbol in the table.
-Symbol& SymbolTable::Get( const std::string& name ) {
+Symbol& CallStack::Get( const std::string& name ) {
 	return( this->topScope->Get( name ) );
 }
 
 /// Gets a symbol in the table.
-Variant& SymbolTable::Eval( const std::string& name ) {
+Variant& CallStack::Eval( const std::string& name ) {
 	return( this->Get( name ).value );
 }
 
 /// Checks if a symbol is declared
-bool SymbolTable::IsDeclared( const std::string& name ) const {
+bool CallStack::IsDeclared( const std::string& name ) const {
 	return( this->topScope->IsDeclared( name ) );
 }
 
 /// Enters into a new empty stack frame
-void SymbolTable::Enter() {
+void CallStack::Enter() {
 	this->Enter( nullptr );
 }
 
 /// Enters into a new stack frame
-void SymbolTable::Enter( StackFrame* frame ) {
-	// if ( SymbolTable::MaxStack &&
-	// 	 this->scopes.size() >= SymbolTable::MaxStack ) {
+void CallStack::Enter( StackFrame* frame ) {
+	// if ( CallStack::MaxStack &&
+	// 	 this->scopes.size() >= CallStack::MaxStack ) {
 	// 	// Error: Stack overflow
 	// 	throw "Stack Overflow";
 	// }
@@ -285,13 +285,13 @@ void SymbolTable::Enter( StackFrame* frame ) {
 }
 
 /// Leaves a stack frame and deletes it
-void SymbolTable::Leave() {
+void CallStack::Leave() {
 	StackFrame* f = this->LeaveFrame( );
 	delete f;
 }
 
 /// Leaves a stack frame and returns it.
-StackFrame* SymbolTable::LeaveFrame() {
+StackFrame* CallStack::LeaveFrame() {
 	if ( this->topScope == this->globalScope ) {
 		// Error: At global scope
 		throw "Stack empty";
@@ -307,7 +307,7 @@ StackFrame* SymbolTable::LeaveFrame() {
 
 
 /// Prints a back trace of the last 5 stack frames.
-void SymbolTable::BackTrace(std::ostream& os) const {
+void CallStack::BackTrace(std::ostream& os) const {
 	this->topScope->BackTraceLine( os, 1, 5 );
 }
 

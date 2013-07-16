@@ -7,8 +7,8 @@
 #include "variant/variant.h"
 
 
-#ifndef GOLD_SYMBOLTABLE_H
-#define GOLD_SYMBOLTABLE_H
+#ifndef GOLD_CALLSTACK_H
+#define GOLD_CALLSTACK_H
 
 
 namespace gold {
@@ -115,13 +115,13 @@ public:
 };
 
 /// A symbol table.
-class SymbolTable {
+class CallStack {
 public:
 	/// Creates a new, empty, symbol table
-	SymbolTable();
+	CallStack();
 
 	/// Symbol table destructor.
-	~SymbolTable();
+	~CallStack();
 
 	/// Defines a new symbol, on the top stack frame
 	void Define( const std::string&, Variant );

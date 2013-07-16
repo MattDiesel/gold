@@ -3,12 +3,12 @@
 #include <string>
 
 #include "../variant/variant.h"
-#include "../symboltable.h"
+#include "../callstack.h"
 
 using namespace gold;
 
 int main() {
-	SymbolTable tbl;
+	CallStack tbl;
 
 	try {
 
