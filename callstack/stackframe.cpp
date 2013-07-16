@@ -1,6 +1,7 @@
 
 #include <string>
 #include <ostream>
+#include <map>
 
 #include "../variant/variant.h"
 #include "symbol.h"

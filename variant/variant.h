@@ -1,15 +1,10 @@
 
 #include <string>
 #include <ostream>
-#include <sstream>
-#include <vector>
-#include <map>
-#include <memory>
 
-#include <iostream>
 
-#ifndef GOLD_VARIANT_H
-#define GOLD_VARIANT_H
+#ifndef GOLD_VARIANT_VARIANT_H
+#define GOLD_VARIANT_VARIANT_H
 
 namespace gold {
 
@@ -82,13 +77,6 @@ private:
 	VariantBase* variant;
 
 };
-
-
-// Commonly used variants.
-extern Variant VarTrue;
-extern Variant VarFalse;
-extern Variant VarZero;
-extern Variant VarEmptyStr;
 
 
 /// Base variant class.
@@ -218,261 +206,29 @@ public:
 std::ostream& operator<<( std::ostream&, const Variant& );
 
 
-/// Variant class for all number types.
-class VarNumeric : public VariantBase {
-public:
-
-	/// Creates a new Numeric variant.
-	/// Same constructor used for all native numeric types
-	VarNumeric( double );
-
-	/// Parses a number from a string.
-	VarNumeric( const std::string& );
-
-
-	/// Returns the type as a string.
-	virtual const std::string& GetType() const;
-
-
-	/// Returns true.
-	virtual bool IsNumber() const;
-
-	/// Returns true if the value is integral
-	virtual bool IsInt() const;
-
-	/// Returns true if the value is not integral
-	virtual bool IsFloat() const;
-
-
-	/// Returns the native boolean representation of the variant
-	/// If Value is 0.0 then this returns FALSE. Otherwise it returns TRUE
-	virtual bool AsBool() const;
-
-	/// Returns the native string representation of the variant
-	virtual std::string AsString() const;
-
-	/// Returns the native integer representation of the variant
-	/// Values are truncated
-	virtual int AsInt() const;
-
-	/// Returns the native real representation of the variant
-	virtual double AsFloat() const;
-
-
-	/// Returns the number version of the variant
-	/// This overload returns a copy of itself.
-	virtual Variant ToNumber() const;
-
-
-	/// Writes the string version of the variant to the output stream
-	virtual std::ostream& Write( std::ostream& ) const;
-
-
-	/// Compares two Variants using a numeric comparison
-	static int Compare( const Variant&, const Variant& );
-
-	/// The stored value.
-	double Value;
-private:
-	/// The type name as returned by GetType()
-	static const std::string typeName;
-};
-
-/// Variant class for boolean types
-class VarBool : public VariantBase {
-public:
-	/// Creates a new boolean Variant.
-	/// This should only be called twice for TRUE and FALSE.
-	VarBool( bool );
-
-	/// Creates a new boolean variant from a string value.
-	/// Empty strings are FALSE, non empty strings are TRUE.
-	VarBool( const std::string& );
-
-
-	/// Returns the type as a string.
-	virtual const std::string& GetType() const;
-
-
-	/// Returns true.
-	virtual bool IsBool() const;
-
-
-	/// Returns the native boolean representation of the variant
-	virtual bool AsBool() const;
-
-	/// Returns the native string representation of the variant
-	virtual std::string AsString() const;
-
-	/// Returns the native integer representation of the variant
-	virtual int AsInt() const;
-
-	/// Returns the native real representation of the variant
-	virtual double AsFloat() const;
-
-	bool Value;
-private:
-	/// The type name as returned by GetType()
-	static const std::string typeName;
-
-	/// The string value of TRUE
-	static const std::string strTrue;
-
-	/// The string value of FALSE
-	static const std::string strFalse;
-};
-
-/// Variant class for strings types
-class VarString : public VariantBase {
-public:
-	/// Creates a new string variant.
-	VarString( std::string );
-
-	/// Returns the type as a string.
-	virtual const std::string& GetType() const;
-
-	/// Returns true.
-	virtual bool IsString() const;
-
-	/// Returns the string as a boolean value.
-	/// "" is FALSE, all other values are TRUE.
-	virtual bool AsBool() const;
-
-	/// Returns the native string value
-	virtual std::string AsString() const;
-
-	/// Returns the string value as an integer.
-	/// Non-integer strings return zero
-	virtual int AsInt() const;
-
-	/// Returns the string value as a real
-	/// Non-numeric string values return zero
-	virtual double AsFloat() const;
-
-	/// Returns the string value as a numeric variant.
-	/// Non-numeric string values return zero.
-	virtual Variant ToNumber() const;
-
-	/// Compares two variants for equality as strings (native version).
-	/// Comparison is case insensitive.
-	static int Compare( const std::string&, const std::string& );
-
-	/// Compares two variants for equality as strings.
-	/// Comparison is case insensitive.
-	static int Compare( const Variant&, const Variant& );
-
-	std::string Value;
-private:
-	/// The type name as returned by GetType()
-	static const std::string typeName;
-};
-
-/// Variant class for array types
-class VarArray : public VariantBase {
-public:
-	/// Returns the type as a string.
-	virtual const std::string& GetType() const;
-
-	/// Returns true.
-	virtual bool IsArray() const;
-
-	/// Retrieves the item at the given index
-	virtual Variant& Get( const Variant );
-
-	/// Sets the item at the given index
-	virtual Variant Set( const Variant, Variant );
-
-	/// Retrieves the item at the given index
-	virtual Variant& Get( int );
-
-	/// Sets the item at the given index
-	virtual Variant Set( int, Variant );
-
-
-	/// Adds an item to the array
-	bool Add( Variant );
-
-	/// Inserts an item into the array.
-	bool Insert( const Variant, int );
-
-	/// Inserts an item into the array.
-	bool Insert( const Variant, Variant );
-
-	/// Removes an item from the array
-	bool Remove( int );
-
-	/// Removes an item from the array
-	bool Remove( const Variant );
-
-	/// Returns the number of items in the array.
-	Variant Count();
-
-	/// Writes the string version of the variant to the output stream
-	virtual std::ostream& Write( std::ostream& ) const;
-
-	std::vector<Variant> Value;
-private:
-	/// The type name as returned by GetType()
-	static const std::string typeName;
-};
-
-/// Variant class for a map (dictionary/associative array etc.)
-class VarMap : public VariantBase {
-public:
-	/// Creates a new, empty, map variant.
-	VarMap();
-
-	/// Returns the type as a string.
-	virtual const std::string& GetType() const;
-
-	/// Returns true.
-	virtual bool IsMap() const;
-
-	/// Retrieves the item at the given key
-	virtual Variant& Get( const Variant );
-
-	/// Sets the item at the given key
-	virtual Variant Set( const Variant, Variant );
-
-	/// Adds a variant to the map.
-	virtual bool Add( const Variant, Variant );
-
-	/// Removes a variant from the map
-	virtual bool Remove( const Variant );
-
-	/// Returns the number of key-value pairs in the map
-	virtual Variant Count();
-
-	/// Writes the string version of the variant to the output stream
-	virtual std::ostream& Write( std::ostream& ) const;
-
-	std::map<Variant, Variant, VariantBase::Less> Value;
-private:
-	/// The type name as returned by GetType()
-	static const std::string typeName;
-};
-
-/// Variant class representing a tuple
-///   Tuples are alternatives to lists, that are treated slightly differently in
-///   assignment and other instances.
-class VarTuple : public VarArray {
-public:
-	/// Returns the type as a string.
-	virtual const std::string& GetType() const;
-
-	/// Returns false.
-	virtual bool IsArray() const;
-
-	/// Returns true.
-	virtual bool IsTuple() const;
-
-	/// Writes the string version of the variant to the output stream
-	virtual std::ostream& Write( std::ostream& ) const;
-
-private:
-	/// The type name as returned by GetType()
-	static const std::string typeName;
-};
+// Commonly used variants.
+extern Variant VarTrue;
+extern Variant VarFalse;
+extern Variant VarZero;
+extern Variant VarEmptyStr;
+
+
+// TODO: Put this somewhere better:
+
+/// Compares two values of the same type using the comparison operators.
+template<class T>
+int basicComparison( T a, T b ) {
+	int ret = 0;
+
+	if ( a > b ) {
+		ret = 1;
+	}
+	else if ( a < b ) {
+		ret = -1;
+	}
+
+	return ret;
+}
 
 
 } // namespace gold
