@@ -21,12 +21,36 @@ LoopFrame::~LoopFrame() {
 
 /// Exits the loop
 StackFrame* LoopFrame::ExitLoop( int level ) {
-	return( this->Leave() );
+	if ( level <= 0 ) {
+		return( this );
+	}
+	else if ( level == 1 ) {
+		return( this->Leave() );
+	}
+	else {
+		StackFrame* t = this->tail;
+
+		this->Leave( );
+
+		return( t->ExitLoop( level - 1 ) );
+	}
 }
 
 /// Continues the loop
 StackFrame* LoopFrame::ContinueLoop( int level ) {
-	return( this->Leave() );
+	if ( level <= 0 ) {
+		return( this );
+	}
+	else if ( level == 1 ) {
+		return( this );
+	}
+	else {
+		StackFrame* t = this->tail;
+
+		this->Leave( );
+
+		return( t->ContinueLoop( level - 1 ) );
+	}
 }
 
 /// Prints this stack frames line in a back trace.

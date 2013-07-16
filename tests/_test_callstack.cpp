@@ -5,8 +5,10 @@
 #include "../variant/variant.h"
 #include "../callstack/stackframe.h"
 #include "../callstack/functionframe.h"
+#include "../callstack/loopframe.h"
 
 using namespace gold;
+
 
 int main() {
 	// Global Scope
@@ -14,52 +16,22 @@ int main() {
 
 	try {
 
-		tbl->Define( "Foo", Variant( "FooGlobal" ) );
+		tbl = tbl->Enter( new LoopFrame( ) );
+		tbl = tbl->Enter( new StackFrame( ) );
 
-		// FooGlobal
-		std::cout << tbl->Eval( "Foo" ) << std::endl;
+		tbl->ScopeTrace(std::cout, 1, 10);
 
+		std::cout << "ContinueLoop" << std::endl;
+		tbl = tbl->ContinueLoop( 1 );
 
-		std::cout << "Entering scope" << std::endl;
-		tbl = tbl->Enter( );
-
-
-		tbl->Define( "Test", Variant( "TestValue" ) );
-
-
-		std::cout << "Entering scope" << std::endl;
-		tbl = tbl->Enter( new FunctionFrame( "FooBar" ) );
-
-		tbl->Define( "Bar", Variant( "BarValue" ) );
-		tbl->Define( "Foo", Variant( "FooLocal" ) );
-
-		// FooLocal
-		std::cout << tbl->Eval( "Foo" ) << std::endl;
-
-		// BarValue
-		std::cout << tbl->Eval( "Bar" ) << std::endl;
-
-		// Error!
-		// std::cout << tbl->Eval( "Test" ) << std::endl;
-
-		std::cout << "Leaving scope" << std::endl;
-		tbl = tbl->Leave();
-
-		std::cout << "Leaving scope" << std::endl;
-		tbl = tbl->Leave();
-
-		// FooGlobal
-		std::cout << tbl->Eval( "Foo" ) << std::endl;
-
-		// Error
-		std::cout << tbl->Eval( "Bar" ) << std::endl;
+		tbl->ScopeTrace(std::cout, 1, 10);
 	}
 	catch ( const char* s ) {
 		std::cerr << s << std::endl << "Back trace: " << std::endl;
 		tbl->BackTrace(std::cerr, 1, 10);
 	}
 
-	tbl = tbl->Leave( );
+	tbl->LeaveStack( );
 
 	return 0;
 }

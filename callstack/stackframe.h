@@ -58,6 +58,9 @@ public:
 	/// Leaves the stack frame.
 	virtual StackFrame* Leave();
 
+	/// Leaves the stack frame.
+	void LeaveStack();
+
 
 	// Jump functions -------------------------------------
 	// These only do the stack management part of these operations.

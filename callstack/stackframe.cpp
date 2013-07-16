@@ -110,6 +110,12 @@ StackFrame* StackFrame::Leave( ) {
 	return( top );
 }
 
+/// Leaves the entire stack.
+void StackFrame::LeaveStack( ) {
+	StackFrame* t = this->Leave( );
+
+	t->LeaveStack();
+}
 
 /// Exits N levels of loop
 StackFrame* StackFrame::ExitLoop(int level) {
@@ -118,7 +124,14 @@ StackFrame* StackFrame::ExitLoop(int level) {
 		throw "ExitLoop statement has no matching loop";
 	}
 
-	return( this->Leave() );
+	if (level <= 0) {
+		return( this );
+	}
+
+	StackFrame* t = this->tail;
+	this->Leave();
+
+	return( t->ExitLoop( level ) );
 }
 
 /// Continues N levels of loop
@@ -128,7 +141,14 @@ StackFrame* StackFrame::ContinueLoop(int level) {
 		throw "ExitLoop statement has no matching loop";
 	}
 
-	return( this->Leave() );
+	if (level <= 0) {
+		return( this );
+	}
+
+	StackFrame* t = this->tail;
+	this->Leave( );
+
+	return( t->ContinueLoop( level ) );
 }
 
 /// Returns from a function
@@ -138,7 +158,7 @@ StackFrame* StackFrame::Return() {
 		throw "Return statement not in function";
 	}
 
-	return( this->Leave() );
+	return( this->Leave( ) );
 }
 
 /// Calls the next frames BackTrace
