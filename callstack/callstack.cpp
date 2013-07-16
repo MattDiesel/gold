@@ -3,8 +3,8 @@
 #include <map>
 #include <vector>
 
-#include "util/cistring.h"
-#include "variant/variant.h"
+#include "../util/cistring.h"
+#include "../variant/variant.h"
 
 #include "callstack.h"
 
@@ -53,12 +53,12 @@ bool Symbol::IsArgument() const {
 
 
 /// Initializes a new, empty, stack frame structure.
-StackFrame::StackFrame()
+StackFrame::StackFrame( )
 		: tail( nullptr ) {
 }
 
 /// Destructor for a stack frame
-StackFrame::~StackFrame() {
+StackFrame::~StackFrame( ) {
 }
 
 

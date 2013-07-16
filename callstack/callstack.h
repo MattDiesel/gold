@@ -3,8 +3,8 @@
 #include <map>
 #include <vector>
 
-#include "util/cistring.h"
-#include "variant/variant.h"
+#include "../util/cistring.h"
+#include "../variant/variant.h"
 
 
 #ifndef GOLD_CALLSTACK_H
