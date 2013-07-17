@@ -5,8 +5,6 @@
 
 #include "../variant/variant.h"
 
-#include "symbol.h"
-
 
 #ifndef GOLD_CALLSTACK_STACKFRAME_H
 #define GOLD_CALLSTACK_STACKFRAME_H
@@ -23,22 +21,25 @@ public:
 	// Symbol functions -----------------------------------
 
 	/// Defines a variable on this stack frame
-	void Define( const std::string&, Variant );
-
-	/// Defines a variable on this stack frame
-	virtual void Define( const std::string&, Variant, Symbol::Flags ) = 0;
+	virtual void Define( const std::string&, Variant ) = 0;
 
 	/// Assigns a value to a symbol on this stack frame
-	virtual void Assign( const std::string&, Variant );
+	virtual void Assign( const std::string&, Variant ) = 0;
 
 	/// Gets the value of a symbol on this stack frame
-	virtual Variant& Eval( const std::string& );
-
-	/// Gets a reference to a symbol on this stack frame.
-	virtual Symbol& Get( const std::string& ) = 0;
+	virtual Variant& Eval( const std::string& ) = 0;
 
 	/// Checks if a symbol is declrared
 	virtual bool IsDeclared( const std::string& ) const = 0;
+
+	/// Assigns a value to a symbol on this stack frame
+	virtual void BlockAssign( const std::string&, Variant );
+
+	/// Gets the value of a symbol on this stack frame
+	virtual Variant& BlockEval( const std::string& );
+
+	/// Checks if a symbol is declrared
+	virtual bool BlockIsDeclared( const std::string& ) const;
 
 
 	// Stack functions ------------------------------------

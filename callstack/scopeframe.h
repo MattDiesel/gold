@@ -29,13 +29,23 @@ public:
 	// Symbol functions -----------------------------------
 
 	/// Defines a variable on this stack frame
+	virtual void Define( const std::string&, Variant );
+
+	/// Defines a variable on this stack frame
 	virtual void Define( const std::string&, Variant, Symbol::Flags );
 
-	/// Gets a reference to a symbol on this stack frame.
+	/// Assigns a value to a symbol on this stack frame
+	virtual void Assign( const std::string&, Variant );
+
+	/// Gets the value of a symbol on this stack frame
+	virtual Variant& Eval( const std::string& );
+
 	virtual Symbol& Get( const std::string& );
 
 	/// Checks if a symbol is declrared
 	virtual bool IsDeclared( const std::string& ) const;
+
+	virtual bool Exists( const std::string& ) const;
 
 protected:
 	typedef std::map<std::string, Symbol> SetType;

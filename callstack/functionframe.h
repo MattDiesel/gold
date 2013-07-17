@@ -24,11 +24,23 @@ public:
 
 	// Symbol functions -----------------------------------
 
-	/// Gets a reference to a symbol on this stack frame.
-	virtual Symbol& Get( const std::string& );
+	/// Assigns a value to a symbol on this stack frame
+	virtual void Assign( const std::string&, Variant );
+
+	/// Gets the value of a symbol on this stack frame
+	virtual Variant& Eval( const std::string& );
 
 	/// Checks if a symbol is declrared
 	virtual bool IsDeclared( const std::string& ) const;
+
+	/// Assigns a value to a symbol on this stack frame
+	virtual void BlockAssign( const std::string&, Variant );
+
+	/// Gets the value of a symbol on this stack frame
+	virtual Variant& BlockEval( const std::string& );
+
+	/// Checks if a symbol is declrared
+	virtual bool BlockIsDeclared( const std::string& ) const;
 
 	// Stack functions ------------------------------------
 

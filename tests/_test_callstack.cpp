@@ -5,26 +5,27 @@
 #include "../variant/variant.h"
 #include "../callstack/stackframe.h"
 #include "../callstack/functionframe.h"
-#include "../callstack/loopframe.h"
+#include "../callstack/globalscope.h"
 
 using namespace gold;
 
 
 int main() {
 	// Global Scope
-	StackFrame* tbl = new ScopeFrame( );
+	StackFrame* tbl = new GlobalScope( );
+
+	tbl->Define( "Test", 24 );
 
 	try {
-
-		tbl = tbl->Enter( new LoopFrame( ) );
 		tbl = tbl->Enter( new ScopeFrame( ) );
 
-		tbl->ScopeTrace(std::cout, 1, 10);
+		tbl->Define( "Test", 42 );
 
-		std::cout << "ContinueLoop" << std::endl;
-		tbl = tbl->ContinueLoop( 1 );
+		tbl = tbl->Enter( new FunctionFrame( "FooBar" ) );
 
-		tbl->ScopeTrace(std::cout, 1, 10);
+		std::cout << tbl->Eval( "Test" ) << std::endl;
+
+		tbl->Return();
 	}
 	catch ( const char* s ) {
 		std::cerr << s << std::endl << "Back trace: " << std::endl;

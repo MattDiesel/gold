@@ -14,26 +14,35 @@ StackFrame::StackFrame()
 		: tail( nullptr ) {
 }
 
-/// Defines a variable on this stack frame
-void StackFrame::Define( const std::string& name, Variant var ) {
-	this->Define( name, var, Symbol::NoFlags );
-}
 
 /// Assigns a value to a symbol on this stack frame
-void StackFrame::Assign( const std::string& name, Variant var ) {
-	Symbol& v = this->Get( name );
-
-	if ( v.IsConst() ) {
-		// Error: Attempt to assign to a constant
-		throw "Assigning to a constant";
+void StackFrame::BlockAssign( const std::string& name, Variant v ) {
+	if ( !this->tail ) {
+		// Error: Symbol not found
+		throw "Symbol not found";
 	}
 
-	v.value = var;
+	return( this->tail->BlockAssign( name, v ) );
 }
 
 /// Gets the value of a symbol on this stack frame
-Variant& StackFrame::Eval( const std::string& name ) {
-	return( this->Get( name ).value );
+Variant& StackFrame::BlockEval( const std::string& name ) {
+	if ( !this->tail ) {
+		// Error: Symbol not found
+		throw "Symbol not found";
+	}
+
+	return( this->tail->BlockEval( name ) );
+}
+
+/// Checks if a symbol is declrared
+bool StackFrame::BlockIsDeclared( const std::string& name ) const {
+	if ( !this->tail ) {
+		// Error: Symbol not found
+		throw "Symbol not found";
+	}
+
+	return( this->tail->BlockIsDeclared( name ) );
 }
 
 

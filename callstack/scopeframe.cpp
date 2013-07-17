@@ -24,6 +24,11 @@ ScopeFrame::~ScopeFrame( ) {
 
 
 /// Defines a variable on this stack frame
+void ScopeFrame::Define( const std::string& name, Variant var ) {
+	this->Define( name, var, Symbol::NoFlags );
+}
+
+/// Defines a variable on this stack frame
 void ScopeFrame::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
 	ScopeFrame::SetType::const_iterator it = this->symbols.find( name );
 
@@ -35,27 +40,56 @@ void ScopeFrame::Define( const std::string& name, Variant var, Symbol::Flags fla
 	this->symbols.insert( std::pair<std::string, Symbol>( name, Symbol( var, flags ) ) );
 }
 
-/// Gets a reference to a symbol on this stack frame.
-Symbol& ScopeFrame::Get( const std::string& name ) {
-	ScopeFrame::SetType::iterator it = this->symbols.find( name );
+/// Assigns a value to a symbol on this stack frame
+void ScopeFrame::Assign( const std::string& name, Variant var ) {
+	ScopeFrame::SetType::iterator sym = this->symbols.find( name );
 
-	if ( it == this->symbols.end() ) {
-		if ( !this->tail ) {
+	if ( sym == this->symbols.end() ) {
+		if ( !this->tail) {
 			// Error: Symbol not found
-			throw "Symbol not found!";
+			throw "Symbol not found in scope";
 		}
 
-		return( this->tail->Get( name ) );
+		this->tail->Assign( name, var );
+		return;
 	}
 
-	return( ( *it ).second );
+	if ( ( *sym ).second.IsConst() ) {
+		// Error: Attempt to assign to a constant
+		throw "Assigning to a constant";
+	}
+
+	( *sym ).second.value = var;
+}
+
+/// Gets the value of a symbol on this stack frame
+Variant& ScopeFrame::Eval( const std::string& name ) {
+	if ( this->Exists( name ) ) {
+		return( this->Get( name ).value );
+	}
+
+	if ( !this->tail ) {
+		// Error: Symbol not found
+		throw "Symbol not found";
+	}
+
+	return ( this->tail->Eval( name ) );
+}
+
+Symbol& ScopeFrame::Get( const std::string& name ) {
+	ScopeFrame::SetType::iterator sym = this->symbols.find( name );
+
+	if ( sym == this->symbols.end() ) {
+		// Error: Symbol not found
+		throw "Symbol not found in scope";
+	}
+
+	return( ( *sym ).second );
 }
 
 /// Checks if a symbol is declrared
 bool ScopeFrame::IsDeclared( const std::string& name ) const {
-	ScopeFrame::SetType::const_iterator it = this->symbols.find( name );
-
-	if ( it != this->symbols.end() ) {
+	if ( !this->Exists( name ) ) {
 		if ( !this->tail ) {
 			return( false );
 		}
@@ -66,5 +100,8 @@ bool ScopeFrame::IsDeclared( const std::string& name ) const {
 	return( true );
 }
 
+bool ScopeFrame::Exists( const std::string& name ) const {
+	return ( this->symbols.find( name ) != this->symbols.end() );
+}
 
 } // namespace gold
