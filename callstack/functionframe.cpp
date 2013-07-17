@@ -24,7 +24,7 @@ FunctionFrame::~FunctionFrame() {
 
 /// Gets a reference to a symbol on this stack frame.
 Symbol& FunctionFrame::Get( const std::string& name ) {
-	StackFrame::SetType::iterator it = this->symbols.find( name );
+	ScopeFrame::SetType::iterator it = this->symbols.find( name );
 
 	if ( it == this->symbols.end() ) {
 		if ( !this->tail ) {
@@ -48,7 +48,7 @@ Symbol& FunctionFrame::Get( const std::string& name ) {
 
 /// Checks if a symbol is declrared
 bool FunctionFrame::IsDeclared( const std::string& name ) const {
-	StackFrame::SetType::const_iterator it = this->symbols.find( name );
+	ScopeFrame::SetType::const_iterator it = this->symbols.find( name );
 
 	if ( it != this->symbols.end() ) {
 		if ( !this->tail ) {

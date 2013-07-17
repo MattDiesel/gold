@@ -2,7 +2,7 @@
 #include <string>
 #include <ostream>
 
-#include "stackframe.h"
+#include "scopeframe.h"
 #include "symbol.h"
 
 
@@ -14,7 +14,7 @@ namespace gold {
 
 
 /// A scope on the stack for a function
-class FunctionFrame : public StackFrame {
+class FunctionFrame : public ScopeFrame {
 public:
 	/// Creates a new stack frame for a function
 	FunctionFrame(std::string);

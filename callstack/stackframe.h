@@ -15,17 +15,10 @@
 namespace gold {
 
 
-/// A scope on the stack.
+/// Abstract base class for a stack frame.
 class StackFrame {
 public:
-	typedef std::map<std::string, Symbol> SetType;
-
-	/// Initializes a new, empty, stack frame structure.
 	StackFrame();
-
-	/// Destructor for a stack frame
-	~StackFrame();
-
 
 	// Symbol functions -----------------------------------
 
@@ -33,7 +26,7 @@ public:
 	void Define( const std::string&, Variant );
 
 	/// Defines a variable on this stack frame
-	virtual void Define( const std::string&, Variant, Symbol::Flags );
+	virtual void Define( const std::string&, Variant, Symbol::Flags ) = 0;
 
 	/// Assigns a value to a symbol on this stack frame
 	virtual void Assign( const std::string&, Variant );
@@ -42,10 +35,10 @@ public:
 	virtual Variant& Eval( const std::string& );
 
 	/// Gets a reference to a symbol on this stack frame.
-	virtual Symbol& Get( const std::string& );
+	virtual Symbol& Get( const std::string& ) = 0;
 
 	/// Checks if a symbol is declrared
-	virtual bool IsDeclared( const std::string& ) const;
+	virtual bool IsDeclared( const std::string& ) const = 0;
 
 
 	// Stack functions ------------------------------------
@@ -84,7 +77,6 @@ public:
 	/// Prints this stack frames line in a back trace.
 	virtual void ScopeTrace(std::ostream&, int, int) const;
 
-	SetType symbols;
 	StackFrame* tail;
 };
 

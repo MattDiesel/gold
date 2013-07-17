@@ -12,12 +12,12 @@ using namespace gold;
 
 int main() {
 	// Global Scope
-	StackFrame* tbl = new StackFrame( );
+	StackFrame* tbl = new ScopeFrame( );
 
 	try {
 
 		tbl = tbl->Enter( new LoopFrame( ) );
-		tbl = tbl->Enter( new StackFrame( ) );
+		tbl = tbl->Enter( new ScopeFrame( ) );
 
 		tbl->ScopeTrace(std::cout, 1, 10);
 

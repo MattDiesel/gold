@@ -1,7 +1,7 @@
 
 #include <ostream>
 
-#include "stackframe.h"
+#include "scopeframe.h"
 
 
 #ifndef GOLD_CALLSTACK_LOOPFRAME_H
@@ -11,7 +11,7 @@
 namespace gold {
 
 /// Generic class for loop scopes on the stack
-class LoopFrame : public StackFrame {
+class LoopFrame : public ScopeFrame {
 public:
 	/// Creates a new stack frame for a loop
 	LoopFrame();

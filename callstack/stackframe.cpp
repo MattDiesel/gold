@@ -1,44 +1,22 @@
 
 #include <string>
 #include <ostream>
-#include <map>
 
 #include "../variant/variant.h"
 #include "symbol.h"
+#include "scopeframe.h"
 
 #include "stackframe.h"
 
-
 namespace gold {
 
-// class StackFrame
-
-
-/// Initializes a new, empty, stack frame structure.
-StackFrame::StackFrame( )
+StackFrame::StackFrame()
 		: tail( nullptr ) {
 }
-
-/// Destructor for a stack frame
-StackFrame::~StackFrame( ) {
-}
-
 
 /// Defines a variable on this stack frame
 void StackFrame::Define( const std::string& name, Variant var ) {
 	this->Define( name, var, Symbol::NoFlags );
-}
-
-/// Defines a variable on this stack frame
-void StackFrame::Define( const std::string& name, Variant var, Symbol::Flags flags ) {
-	StackFrame::SetType::const_iterator it = this->symbols.find( name );
-
-	if ( it != this->symbols.end() ) {
-		// Error: Already defined in scope
-		throw "Already defined in scope";
-	}
-
-	this->symbols.insert( std::pair<std::string, Symbol>( name, Symbol( var, flags ) ) );
 }
 
 /// Assigns a value to a symbol on this stack frame
@@ -58,51 +36,21 @@ Variant& StackFrame::Eval( const std::string& name ) {
 	return( this->Get( name ).value );
 }
 
-/// Gets a reference to a symbol on this stack frame.
-Symbol& StackFrame::Get( const std::string& name ) {
-	StackFrame::SetType::iterator it = this->symbols.find( name );
 
-	if ( it == this->symbols.end() ) {
-		if ( !this->tail ) {
-			// Error: Symbol not found
-			throw "Symbol not found!";
-		}
-
-		return( this->tail->Get( name ) );
-	}
-
-	return( ( *it ).second );
-}
-
-/// Checks if a symbol is declrared
-bool StackFrame::IsDeclared( const std::string& name ) const {
-	StackFrame::SetType::const_iterator it = this->symbols.find( name );
-
-	if ( it != this->symbols.end() ) {
-		if ( !this->tail ) {
-			return( false );
-		}
-
-		return( this->tail->IsDeclared( name ) );
-	}
-
-	return( true );
-}
-
-
+/// Enters a new, empty, frame onto the stack
 StackFrame* StackFrame::Enter( ) {
 	return( this->Enter( nullptr ) );
 }
 
+/// Enters a new frame onto the stack
 StackFrame* StackFrame::Enter( StackFrame* fr ) {
 	if ( !fr ) {
-		fr = new StackFrame( );
+		fr = new ScopeFrame( );
 	}
 
 	fr->tail = this;
 	return( fr );
 }
-
 
 /// Leaves the stack frame.
 StackFrame* StackFrame::Leave( ) {
@@ -115,8 +63,11 @@ StackFrame* StackFrame::Leave( ) {
 void StackFrame::LeaveStack( ) {
 	StackFrame* t = this->Leave( );
 
-	t->LeaveStack();
+	if ( t ) {
+		t->LeaveStack();
+	}
 }
+
 
 /// Exits N levels of loop
 StackFrame* StackFrame::ExitLoop(int level) {
@@ -179,4 +130,4 @@ void StackFrame::ScopeTrace(std::ostream& os, int count, int limit) const {
 }
 
 
-} // namespace
+} // namespace gold
