@@ -59,6 +59,11 @@ public:
 
 	// Methods for ref counting ---------------------------
 
+	template<class T>
+	T* Raw( ) {
+		return( static_cast<T*>( this->variant ) );
+	}
+
 	/// Redirects access from variant to pointer
 	VariantBase* operator->();
 
@@ -129,6 +134,9 @@ public:
 
 	/// Checks if the Variant is a tuple
 	virtual bool IsTuple() const;
+
+	/// Checks if the Variant is a tuple
+	virtual bool IsFunc() const;
 
 	// Collection methods ---------------------------------
 

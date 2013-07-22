@@ -55,7 +55,8 @@ Variant::~Variant() {
 
 
 /// Creates a boolean variant
-Variant::Variant( bool f ) {
+Variant::Variant( bool f )
+	: variant( nullptr ) {
 	if ( f ) {
 		*this = VarTrue;
 	}
@@ -211,6 +212,11 @@ bool VariantBase::IsMap() const {
 
 /// Checks if the Variant is a tuple
 bool VariantBase::IsTuple() const {
+	return( false );
+}
+
+/// Checks if the Variant is a tuple
+bool VariantBase::IsFunc() const {
 	return( false );
 }
 
