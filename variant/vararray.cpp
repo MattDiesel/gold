@@ -86,9 +86,11 @@ Variant VarArray::Count() {
 std::ostream& VarArray::Write( std::ostream& os ) const {
 	os << '[';
 
-	for ( Variant v : this->Value ) {
-		v->Write( os );
-		os << ( ( v == this->Value.back() ) ? "]" : ", " );
+	for (auto i = this->Value.begin(); i != this->Value.end(); ++i)
+	{
+		(*i)->Write( os );
+
+		os << ( ( i+1 == this->Value.end() ) ? "]" : ", " );
 	}
 
 	return( os );
