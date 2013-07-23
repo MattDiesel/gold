@@ -9,17 +9,17 @@ namespace gold {
 
 /// Creates a new null symbol.
 Symbol::Symbol( )
-	: value( ), flags( NoFlags ) {
+	: flags( NoFlags ), value( ) {
 }
 
 /// Creates a new symbol for the given variant
 Symbol::Symbol( Variant v )
-	: value( v ), flags( NoFlags ) {
+	: flags( NoFlags ), value( v ) {
 }
 
 /// Creates a new symbol for the given variant with the set flags
 Symbol::Symbol( Variant v, Flags fl )
-	: value( v ), flags( fl ) {
+	: flags( fl ), value( v ) {
 }
 
 /// Symbol destructor.

@@ -28,7 +28,7 @@ std::ostream& operator<<( std::ostream& os, const SourcePos& sp ) {
 
 // Creates a positional stream based on an input stream.
 iposstream::iposstream( std::istream& base )
-	: basestream( base ), Pos( 0, 0, 0 ), next( 1, 1, 1 ), TabWidth( 1 ) {
+	: Pos( 0, 0, 0 ), TabWidth( 1 ), basestream( base ), next( 1, 1, 1 ) {
 }
 
 iposstream::~iposstream() {
