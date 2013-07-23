@@ -14,6 +14,9 @@ StackFrame::StackFrame()
 		: tail( nullptr ) {
 }
 
+StackFrame::~StackFrame() {
+}
+
 
 /// Assigns a value to a symbol on this stack frame
 void StackFrame::BlockAssign( const std::string& name, Variant v ) {

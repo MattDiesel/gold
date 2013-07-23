@@ -97,6 +97,9 @@ protected:
 	/// Initializes the ref count for a new variant
 	VariantBase();
 
+	/// Variant base virtual destructor
+	virtual ~VariantBase();
+
 	/// Increments the ref counter.
 	void refInc() const;
 

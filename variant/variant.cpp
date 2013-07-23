@@ -159,6 +159,10 @@ VariantBase::VariantBase()
 	: refCount( 0 ) {
 }
 
+/// Variant base virtual destructor
+VariantBase::~VariantBase() {
+}
+
 /// Increments the ref counter.
 void VariantBase::refInc() const {
 	this->refCount++;

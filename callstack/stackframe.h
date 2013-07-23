@@ -18,6 +18,8 @@ class StackFrame {
 public:
 	StackFrame();
 
+	virtual ~StackFrame();
+
 	// Symbol functions -----------------------------------
 
 	/// Defines a variable on this stack frame
