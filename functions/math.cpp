@@ -8,16 +8,21 @@
 namespace gold {
 
 
-Variant Sin(std::vector<Variant> args) {
-	return( std::sin( args[0]->AsFloat() ) );
+Variant Sin( std::vector<Variant> args ) {
+	if ( args.size() != 1 ) {
+		// Error: Incorrect number of arguments to function.
+		throw "Incorrect number of arguments to function.";
+	}
+
+	return( std::sin( args.front()->AsFloat() ) );
 }
 
-Variant Cos(std::vector<Variant>) {
-	return( 0 );
+Variant Cos( std::vector<Variant> ) {
+	throw "Not Implemented.";
 }
 
-Variant Tan(std::vector<Variant>) {
-	return( 0 );
+Variant Tan( std::vector<Variant> ) {
+	throw "Not Implemented.";
 }
 
 
