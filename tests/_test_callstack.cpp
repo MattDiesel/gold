@@ -29,7 +29,7 @@ int main() {
 	}
 	catch ( const char* s ) {
 		std::cerr << s << std::endl << "Back trace: " << std::endl;
-		tbl->BackTrace(std::cerr, 1, 10);
+		tbl->BackTrace( std::cerr, 1, 10 );
 	}
 
 	tbl->LeaveStack( );

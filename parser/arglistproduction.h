@@ -13,15 +13,14 @@ namespace gold {
 
 
 /// Production class for function call
-class ArgListProduction : public Production
-{
+class ArgListProduction : public Production {
 public:
 	ArgListProduction();
 	~ArgListProduction();
 
 	virtual Variant Evaluate( StackFrame* );
 
-	virtual void Add(Production*);
+	virtual void Add( Production* );
 private:
 	std::vector<Production*> elements;
 };

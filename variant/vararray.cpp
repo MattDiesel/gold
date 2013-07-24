@@ -17,7 +17,7 @@ const std::string VarArray::typeName( "Array" );
 
 
 VarArray::VarArray( int cap )
-		: Value( ) {
+	: Value( ) {
 	this->Value.reserve( cap );
 }
 
@@ -93,11 +93,10 @@ Variant VarArray::Count() {
 std::ostream& VarArray::Write( std::ostream& os ) const {
 	os << '[';
 
-	for (auto i = this->Value.begin(); i != this->Value.end(); ++i)
-	{
-		(*i)->Write( os );
+	for ( auto i = this->Value.begin(); i != this->Value.end(); ++i ) {
+		( *i )->Write( os );
 
-		os << ( ( i+1 == this->Value.end() ) ? "]" : ", " );
+		os << ( ( i + 1 == this->Value.end() ) ? "]" : ", " );
 	}
 
 	return( os );

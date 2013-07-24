@@ -12,7 +12,7 @@ namespace gold {
 // class Terminal
 
 Terminal::Terminal( Variant v )
-		: value( v ) {
+	: value( v ) {
 }
 
 Variant Terminal::Evaluate( StackFrame* fr ) {

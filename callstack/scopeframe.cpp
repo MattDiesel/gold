@@ -45,7 +45,7 @@ void ScopeFrame::Assign( const std::string& name, Variant var ) {
 	ScopeFrame::SetType::iterator sym = this->symbols.find( name );
 
 	if ( sym == this->symbols.end() ) {
-		if ( !this->tail) {
+		if ( !this->tail ) {
 			// Error: Symbol not found
 			throw "Symbol not found in scope";
 		}

@@ -17,7 +17,7 @@
 namespace gold {
 
 
-typedef Variant (*StandardFunction)( std::vector<Variant> );
+typedef Variant ( *StandardFunction )( std::vector<Variant> );
 
 extern std::map<std::string, Variant> Functions;
 
@@ -50,10 +50,10 @@ public:
 	// Debug functions ------------------------------------
 
 	/// Calls the next frames BackTrace
-	virtual void BackTrace(std::ostream&, int, int) const;
+	virtual void BackTrace( std::ostream&, int, int ) const;
 
 	/// Prints this stack frames line in a back trace.
-	virtual void ScopeTrace(std::ostream&, int, int) const;
+	virtual void ScopeTrace( std::ostream&, int, int ) const;
 };
 
 

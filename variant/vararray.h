@@ -15,7 +15,7 @@ namespace gold {
 /// Variant class for array types
 class VarArray : public VariantBase {
 public:
-	VarArray(int);
+	VarArray( int );
 
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;

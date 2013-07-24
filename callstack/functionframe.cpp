@@ -15,7 +15,7 @@ namespace gold {
 
 /// Creates a new stack frame for a function
 FunctionFrame::FunctionFrame( std::string s )
-		: funcName( s ) {
+	: funcName( s ) {
 }
 
 /// Function stack frame destructor
@@ -44,7 +44,7 @@ void FunctionFrame::BlockAssign( const std::string& name, Variant var ) {
 	ScopeFrame::SetType::iterator sym = this->symbols.find( name );
 
 	if ( sym == this->symbols.end() ) {
-		if ( !this->tail) {
+		if ( !this->tail ) {
 			// Error: Symbol not found
 			throw "Symbol not found in scope";
 		}
@@ -125,7 +125,7 @@ void FunctionFrame::BackTrace( std::ostream& os, int count, int limit ) const {
 	os << count << ". Function '" << this->funcName << "'" << std::endl;
 
 	if ( count < limit && this->tail ) {
-		this->tail->BackTrace(os, count + 1, limit);
+		this->tail->BackTrace( os, count + 1, limit );
 	}
 }
 

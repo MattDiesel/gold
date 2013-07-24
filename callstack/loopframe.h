@@ -23,15 +23,15 @@ public:
 	// These only do the stack management part of these operations.
 
 	/// Exits the loop
-	virtual StackFrame* ExitLoop(int);
+	virtual StackFrame* ExitLoop( int );
 
 	/// Continues the loop
-	virtual StackFrame* ContinueLoop(int);
+	virtual StackFrame* ContinueLoop( int );
 
 	// Debug functions ------------------------------------
 
 	/// Prints this stack frames line in a back trace.
-	virtual void ScopeTrace(std::ostream&, int, int) const;
+	virtual void ScopeTrace( std::ostream&, int, int ) const;
 };
 
 

@@ -11,8 +11,8 @@ namespace gold {
 
 // class FuncCallProduction
 
-FuncCallProduction::FuncCallProduction(Production* fn, Production* arg)
-		: func(fn), args(arg) {
+FuncCallProduction::FuncCallProduction( Production* fn, Production* arg )
+	: func( fn ), args( arg ) {
 }
 
 FuncCallProduction::~FuncCallProduction() {

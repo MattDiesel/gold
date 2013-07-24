@@ -18,7 +18,7 @@ ArgListProduction::ArgListProduction() {
 }
 
 ArgListProduction::~ArgListProduction() {
-	for (Production* pr : this->elements) {
+	for ( Production * pr : this->elements ) {
 		delete pr;
 	}
 }
@@ -26,15 +26,15 @@ ArgListProduction::~ArgListProduction() {
 Variant ArgListProduction::Evaluate( StackFrame* fr ) {
 	VarArray* ret = new VarArray( this->elements.size( ) );
 
-	for (Production* pr : this->elements) {
+	for ( Production * pr : this->elements ) {
 		ret->Add( pr->Evaluate( fr ) );
 	}
 
 	return( ret );
 }
 
-void ArgListProduction::Add(Production* pr) {
-	this->elements.push_back(pr);
+void ArgListProduction::Add( Production* pr ) {
+	this->elements.push_back( pr );
 }
 
 

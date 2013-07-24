@@ -63,10 +63,10 @@ public:
 	// These only do the stack management part of these operations.
 
 	/// Exits N levels of loop
-	virtual StackFrame* ExitLoop(int);
+	virtual StackFrame* ExitLoop( int );
 
 	/// Continues N levels of loop
-	virtual StackFrame* ContinueLoop(int);
+	virtual StackFrame* ContinueLoop( int );
 
 	/// Returns from a function
 	virtual StackFrame* Return();
@@ -75,10 +75,10 @@ public:
 	// Debug functions ------------------------------------
 
 	/// Calls the next frames BackTrace
-	virtual void BackTrace(std::ostream&, int, int) const;
+	virtual void BackTrace( std::ostream&, int, int ) const;
 
 	/// Prints this stack frames line in a back trace.
-	virtual void ScopeTrace(std::ostream&, int, int) const;
+	virtual void ScopeTrace( std::ostream&, int, int ) const;
 
 	StackFrame* tail;
 };

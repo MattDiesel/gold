@@ -33,5 +33,8 @@ int main() {
 
 	std::cout << "Sin(pi) ~= " << fncall->Evaluate( st ) << std::endl;
 
+	delete fn;
+	delete st;
+
 	return 0;
 }

@@ -15,7 +15,7 @@ const std::string VarFunc::typeName( "Function" );
 
 
 VarFunc::VarFunc( StandardFunction fn )
-		: func( fn ) {
+	: func( fn ) {
 }
 
 

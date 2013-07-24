@@ -17,7 +17,7 @@ namespace gold {
 class FunctionFrame : public ScopeFrame {
 public:
 	/// Creates a new stack frame for a function
-	FunctionFrame(std::string);
+	FunctionFrame( std::string );
 
 	/// Function stack frame destructor
 	~FunctionFrame();
@@ -51,10 +51,10 @@ public:
 	// These only do the stack management part of these operations.
 
 	/// Throws an error, as there is no loop remaining.
-	virtual StackFrame* ExitLoop(int);
+	virtual StackFrame* ExitLoop( int );
 
 	/// Throws an error, as there is no loop remaining.
-	virtual StackFrame* ContinueLoop(int);
+	virtual StackFrame* ContinueLoop( int );
 
 	/// Returns from the function
 	virtual StackFrame* Return();
@@ -62,10 +62,10 @@ public:
 	// Debug functions ------------------------------------
 
 	/// Prints this stack frames line in a back trace.
-	virtual void BackTrace(std::ostream&, int, int) const;
+	virtual void BackTrace( std::ostream&, int, int ) const;
 
 	/// Prints this stack frames line in a back trace.
-	virtual void ScopeTrace(std::ostream&, int, int) const;
+	virtual void ScopeTrace( std::ostream&, int, int ) const;
 
 private:
 	std::string funcName;

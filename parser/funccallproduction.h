@@ -11,10 +11,9 @@ namespace gold {
 
 
 /// Production class for function call
-class FuncCallProduction : public Production
-{
+class FuncCallProduction : public Production {
 public:
-	FuncCallProduction(Production*, Production*);
+	FuncCallProduction( Production*, Production* );
 	~FuncCallProduction();
 
 	virtual Variant Evaluate( StackFrame* );

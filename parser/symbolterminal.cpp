@@ -12,7 +12,7 @@ namespace gold {
 // class SymbolTerminal
 
 SymbolTerminal::SymbolTerminal( std::string n )
-		: name( n ) {
+	: name( n ) {
 }
 
 Variant SymbolTerminal::Evaluate( StackFrame* fr ) {

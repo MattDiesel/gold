@@ -47,12 +47,12 @@ bool StandardSymbols::IsDeclared( const std::string& s ) const {
 
 
 /// Calls the next frames BackTrace
-void StandardSymbols::BackTrace(std::ostream&, int, int) const {
+void StandardSymbols::BackTrace( std::ostream&, int, int ) const {
 	throw "Not Implemented";
 }
 
 /// Prints this stack frames line in a back trace.
-void StandardSymbols::ScopeTrace(std::ostream&, int, int) const {
+void StandardSymbols::ScopeTrace( std::ostream&, int, int ) const {
 	throw "Not Implemented";
 }
 

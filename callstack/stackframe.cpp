@@ -11,7 +11,7 @@
 namespace gold {
 
 StackFrame::StackFrame()
-		: tail( nullptr ) {
+	: tail( nullptr ) {
 }
 
 StackFrame::~StackFrame() {
@@ -82,13 +82,13 @@ void StackFrame::LeaveStack( ) {
 
 
 /// Exits N levels of loop
-StackFrame* StackFrame::ExitLoop(int level) {
+StackFrame* StackFrame::ExitLoop( int level ) {
 	if ( !this->tail ) {
 		// Error: ExitLoop statement has no matching loop
 		throw "ExitLoop statement has no matching loop";
 	}
 
-	if (level <= 0) {
+	if ( level <= 0 ) {
 		return( this );
 	}
 
@@ -99,13 +99,13 @@ StackFrame* StackFrame::ExitLoop(int level) {
 }
 
 /// Continues N levels of loop
-StackFrame* StackFrame::ContinueLoop(int level) {
+StackFrame* StackFrame::ContinueLoop( int level ) {
 	if ( !this->tail ) {
 		// Error: ExitLoop statement has no matching loop
 		throw "ExitLoop statement has no matching loop";
 	}
 
-	if (level <= 0) {
+	if ( level <= 0 ) {
 		return( this );
 	}
 
@@ -126,18 +126,18 @@ StackFrame* StackFrame::Return() {
 }
 
 /// Calls the next frames BackTrace
-void StackFrame::BackTrace(std::ostream& os, int count, int limit) const {
+void StackFrame::BackTrace( std::ostream& os, int count, int limit ) const {
 	if ( this->tail ) {
-		this->tail->BackTrace(os, count, limit);
+		this->tail->BackTrace( os, count, limit );
 	}
 }
 
 /// Prints this stack frames line in a back trace.
-void StackFrame::ScopeTrace(std::ostream& os, int count, int limit) const {
+void StackFrame::ScopeTrace( std::ostream& os, int count, int limit ) const {
 	os << count << ". Stack frame" << std::endl;
 
 	if ( count < limit && this->tail ) {
-		this->tail->ScopeTrace(os, count + 1, limit);
+		this->tail->ScopeTrace( os, count + 1, limit );
 	}
 }
 
