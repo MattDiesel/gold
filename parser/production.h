@@ -11,6 +11,8 @@ namespace gold {
 /// Production abstract base class
 class Production {
 public:
+	virtual ~Production();
+
 	virtual Variant Evaluate() = 0;
 };
 
