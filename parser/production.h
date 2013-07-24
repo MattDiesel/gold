@@ -1,4 +1,5 @@
 
+#include "../callstack/stackframe.h"
 #include "../variant/variant.h"
 
 
@@ -13,7 +14,7 @@ class Production {
 public:
 	virtual ~Production();
 
-	virtual Variant Evaluate() = 0;
+	virtual Variant Evaluate( StackFrame* ) = 0;
 };
 
 

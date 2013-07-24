@@ -1,4 +1,5 @@
 
+#include "../callstack/stackframe.h"
 #include "../variant/variant.h"
 #include "production.h"
 
@@ -15,7 +16,7 @@ class Terminal : public Production {
 public:
 	Terminal( Variant );
 
-	virtual Variant Evaluate( );
+	virtual Variant Evaluate( StackFrame* );
 private:
 	Variant value;
 };

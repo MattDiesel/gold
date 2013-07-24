@@ -1,5 +1,6 @@
 
 
+#include "../callstack/stackframe.h"
 #include "../variant/variant.h"
 
 #include "terminal.h"
@@ -14,7 +15,7 @@ Terminal::Terminal( Variant v )
 		: value( v ) {
 }
 
-Variant Terminal::Evaluate( ) {
+Variant Terminal::Evaluate( StackFrame* fr ) {
 	return( this->value );
 }
 

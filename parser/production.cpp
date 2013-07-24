@@ -6,7 +6,7 @@
 namespace gold {
 
 
-Production::~Production() {
+Production::~Production( ) {
 }
 
 

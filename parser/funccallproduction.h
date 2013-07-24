@@ -1,4 +1,5 @@
 
+#include "../callstack/stackframe.h"
 #include "../variant/variant.h"
 #include "production.h"
 
@@ -16,7 +17,7 @@ public:
 	FuncCallProduction(Production*, Production*);
 	~FuncCallProduction();
 
-	virtual Variant Evaluate();
+	virtual Variant Evaluate( StackFrame* );
 private:
 	Production* func;
 	Production* args;

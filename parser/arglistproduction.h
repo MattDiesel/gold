@@ -1,6 +1,7 @@
 
 #include <vector>
 
+#include "../callstack/stackframe.h"
 #include "../variant/variant.h"
 #include "production.h"
 
@@ -18,7 +19,7 @@ public:
 	ArgListProduction();
 	~ArgListProduction();
 
-	virtual Variant Evaluate();
+	virtual Variant Evaluate( StackFrame* );
 
 	virtual void Add(Production*);
 private:

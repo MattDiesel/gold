@@ -1,6 +1,7 @@
 
 #include <vector>
 
+#include "../callstack/stackframe.h"
 #include "../variant/variant.h"
 #include "../variant/vararray.h"
 #include "production.h"
@@ -22,11 +23,11 @@ ArgListProduction::~ArgListProduction() {
 	}
 }
 
-Variant ArgListProduction::Evaluate() {
+Variant ArgListProduction::Evaluate( StackFrame* fr ) {
 	VarArray* ret = new VarArray( this->elements.size( ) );
 
 	for (Production* pr : this->elements) {
-		ret->Add( pr->Evaluate( ) );
+		ret->Add( pr->Evaluate( fr ) );
 	}
 
 	return( ret );

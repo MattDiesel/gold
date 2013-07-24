@@ -1,4 +1,5 @@
 
+#include "../callstack/stackframe.h"
 #include "../variant/variant.h"
 #include "production.h"
 
@@ -19,8 +20,8 @@ FuncCallProduction::~FuncCallProduction() {
 	delete this->args;
 }
 
-Variant FuncCallProduction::Evaluate() {
-	return( this->func->Evaluate( )->Call( this->args->Evaluate( ) ) );
+Variant FuncCallProduction::Evaluate( StackFrame* fr ) {
+	return( this->func->Evaluate( fr )->Call( this->args->Evaluate( fr ) ) );
 }
 
 
