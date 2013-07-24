@@ -16,6 +16,13 @@ namespace gold {
 const std::string VarArray::typeName( "Array" );
 
 
+VarArray::VarArray( int cap )
+		: Value( ) {
+	this->Value.reserve( cap );
+}
+
+
+
 /// Returns the type as a string.
 const std::string& VarArray::GetType() const {
 	return( VarArray::typeName );
