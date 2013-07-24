@@ -5,29 +5,32 @@
 #include <iostream>
 
 #include "../variant/variant.h"
-#include "../variant/vararray.h"
 #include "../functions/standardsymbols.h"
 #include "../callstack/stackframe.h"
+#include "../parser/arglistproduction.h"
+#include "../parser/funccallproduction.h"
+#include "../parser/terminal.h"
 
 
 int main() {
 	gold::StackFrame* st = new gold::StandardSymbols( );
 
 
+	gold::Production* fn = new gold::Terminal( st->Eval( "Sin" ) );
 
-	gold::Variant v = new gold::VarArray( );
+	gold::Production* args;
 
 	{
-		gold::VarArray* a = v.Raw<gold::VarArray>();
-		a->Add( 3.14159625 );
+		gold::ArgListProduction* arr = new gold::ArgListProduction( );
+		arr->Add( new gold::Terminal( 3.14159625 ) );
+
+		args = arr;
 	}
 
-	std::cout << v << std::endl;
+	gold::Production* fncall = new gold::FuncCallProduction( fn, args );
 
 
-	gold::Variant fn = st->Eval( "Sin" );
-
-	std::cout << "Sin(pi) ~= " << fn->Call( v ) << std::endl;
+	std::cout << "Sin(pi) ~= " << fncall->Evaluate( ) << std::endl;
 
 	return 0;
 }
