@@ -8,7 +8,7 @@
 
 #include "../variant/variant.h"
 #include "../callstack/stackframe.h"
-
+#include "standardfuncsmap.h"
 
 #ifndef GOLD_FUNCTIONS_STANDARDSYMBOLS_H
 #define GOLD_FUNCTIONS_STANDARDSYMBOLS_H
@@ -16,10 +16,6 @@
 
 namespace gold {
 
-
-typedef Variant ( *StandardFunction )( std::vector<Variant> );
-
-extern std::map<std::string, Variant> Functions;
 
 /// A scope for the built in language symbols.
 class StandardSymbols : public StackFrame {
