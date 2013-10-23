@@ -10,6 +10,7 @@ namespace gold {
 Variant Sin( std::vector<Variant> );
 Variant Cos( std::vector<Variant> );
 Variant Tan( std::vector<Variant> );
+Variant Round( std::vector<Variant> );
 
 
 } // namespace gold
