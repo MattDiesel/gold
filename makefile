@@ -1,8 +1,8 @@
 
 CC = g++
-RM = del /Q /S
+RM = rm -f
 
-TARGET = a.exe
+TARGET = gold
 COMPILE_OPTIONS = -std=c++0x -Wall
 
 DIRS := variant callstack util functions parser
@@ -14,20 +14,20 @@ GENMAP_FILES := math
 $(OBJS): %.o : %.h
 
 test: $(OBJS)
-	$(CC) $(COMPILE_OPTIONS) $(OBJS) tests\_test_functioncall.cpp -o $(TARGET)
+	$(CC) $(COMPILE_OPTIONS) $(OBJS) tests/_test_functioncall.cpp -o $(TARGET)
 
 %.o: %.cpp
 	$(CC) $(COMPILE_OPTIONS) -c $<  -o $@
 
 clean:
-	$(RM) *.o *.exe functions\standardfuncsmap.cpp
+	$(RM) $(OBJS) ./gold functions/standardfuncsmap.cpp
 
 
 
 functions/standardfuncsmap.o: functions/standardfuncsmap.cpp
 
-functions/standardfuncsmap.cpp: functions\genmap.exe $(foreach f, $(GENMAP_FILES), functions\$(f).h)
-	cd functions && genmap.exe $(GENMAP_FILES) > standardfuncsmap.cpp
+functions/standardfuncsmap.cpp: functions/genmap
+	cd functions && ./genmap $(GENMAP_FILES) > standardfuncsmap.cpp
 
-functions\genmap.exe: functions\symbols_genmap\genmap.cpp
-	$(CC) $(COMPILE_OPTIONS) functions\symbols_genmap\genmap.cpp -o functions\genmap.exe
+functions/genmap: functions/symbols_genmap/genmap.cpp
+	$(CC) $(COMPILE_OPTIONS) functions/symbols_genmap/genmap.cpp -o functions/genmap
