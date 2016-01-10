@@ -237,6 +237,18 @@ Variant VariantBase::Set( const Variant key, Variant value ) {
 	return( value );
 }
 
+/// Appends an item to a collection
+bool VariantBase::Append( Variant value ) {
+	// throw EvaluateError("Attempt to append to non-collection variant.");
+	throw "Attempt to append to non-collection variant.";
+}
+
+/// Concatenates collections
+bool VariantBase::Concat( Variant value ) {
+	// throw EvaluateError("Attempt to append to non-collection variant.");
+	throw "Attempt to concatenate non-collection variant.";
+}
+
 
 /// Invokes a function
 Variant VariantBase::Call( Variant v ) {

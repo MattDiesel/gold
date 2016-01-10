@@ -35,6 +35,12 @@ public:
 	/// Sets the item at the given index
 	virtual Variant Set( int, Variant );
 
+	/// Appends an item to a collection
+	virtual bool Append( Variant );
+
+	/// Concatenates collections
+	virtual bool Concat( Variant );
+
 
 	/// Adds an item to the array
 	bool Add( Variant );

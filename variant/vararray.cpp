@@ -56,6 +56,26 @@ Variant VarArray::Set( const Variant key, Variant val ) {
 	return( val );
 }
 
+/// Appends an item to a collection
+bool VarArray::Append( Variant value ) {
+	return this->Add(value);
+}
+
+/// Concatenates collections
+bool VarArray::Concat( Variant value ) {
+	if (!value->IsArray()) {
+		throw "TODO";
+	}
+
+	VarArray* arr = value.Raw<VarArray>();
+
+	this->Value.reserve(this->Value.size() + arr->Value.size());
+	this->Value.insert(this->Value.end(), arr->Value.begin(), arr->Value.end());
+
+	return true;
+}
+
+
 /// Adds an item to the array
 bool VarArray::Add( Variant v ) {
 	this->Value.push_back( v );
