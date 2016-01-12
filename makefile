@@ -1,33 +1,62 @@
 
 CC = g++
-RM = rm -f
 
-TARGET = gold
+ifdef ComSpec
+	RM = del /F /Q
+    SL2=\\
+    CMDSEP=;
+	TARGET = gold.exe
+else
+	RM = rm -f
+    SL2=/
+    CMDSEP=&
+	TARGET = gold
+endif
+SL=$(strip $(SL2))
+
 COMPILE_OPTIONS = -std=c++0x -Wall
 
-DIRS := variant callstack util functions parser
-SRCS := $(sort $(foreach d, $(DIRS), $(wildcard $(d)/*.cpp)) functions/standardfuncsmap.cpp)
-OBJS = $(SRCS:.cpp=.o)
+FUNCSMAP = functions$(SL)standardfuncsmap.cpp
+FUNCSMAP_O = $(FUNCSMAP:.cpp=.o)
+GENMAP_CC = functions$(SL)symbols_genmap$(SL)genmap.cpp
+
 
 GENMAP_FILES := math
+DIRS := variant callstack util functions parser
+
+
+SRCS_NN := $(sort $(foreach d, $(DIRS), $(wildcard $(d)/*.cpp)) $(FUNCSMAP))
+
+ifdef ComSpec
+	SRCS = $(subst /,$(SL),$(SRCS_NN))
+	GENMAP = functions$(SL)genmap.exe
+else
+	SRCS = SRCS_NN
+	GENMAP = functions$(SL)genmap
+endif
+
+OBJS = $(SRCS:.cpp=.o)
+
+
 
 $(OBJS): %.o : %.h
 
 test: $(OBJS)
-	$(CC) $(COMPILE_OPTIONS) $(OBJS) tests/_test_functioncall.cpp -o $(TARGET)
+	echo $(OBJS)
+	$(CC) $(COMPILE_OPTIONS) $(OBJS) tests$(SL)_test_variant.cpp -o $(TARGET)
 
 %.o: %.cpp
 	$(CC) $(COMPILE_OPTIONS) -c $<  -o $@
 
 clean:
-	$(RM) $(OBJS) ./gold functions/standardfuncsmap.cpp
+	$(RM) $(OBJS) $(TARGET) $(FUNCSMAP) $(FUNCSMAP_O)
 
 
 
-functions/standardfuncsmap.o: functions/standardfuncsmap.cpp
+$(FUNCSMAP_O): $(FUNCSMAP)
 
-functions/standardfuncsmap.cpp: functions/genmap
-	cd functions && ./genmap $(GENMAP_FILES) > standardfuncsmap.cpp
+$(FUNCSMAP): $(GENMAP)
+	$(GENMAP) $(GENMAP_FILES) > $(FUNCSMAP)
 
-functions/genmap: functions/symbols_genmap/genmap.cpp
-	$(CC) $(COMPILE_OPTIONS) functions/symbols_genmap/genmap.cpp -o functions/genmap
+$(GENMAP):
+	$(CC) $(COMPILE_OPTIONS) $(GENMAP_CC) -o $(GENMAP)
