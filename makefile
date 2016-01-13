@@ -52,6 +52,9 @@ test: $(OBJS)
 clean:
 	$(RM) $(OBJS) $(TARGET) $(FUNCSMAP) $(FUNCSMAP_O)
 
+veryclean:
+	$(RM) $(OBJS) $(TARGET) $(FUNCSMAP) $(FUNCSMAP_O) $(GENMAP)
+
 
 
 $(FUNCSMAP_O): $(FUNCSMAP)
