@@ -9,12 +9,16 @@
 int main() {
 	gold::Variant v = new gold::VarArray( 10 );
 
+
+	v->Append(42);
+	v->Append("Hello");
+
 	{
-		gold::VarArray* a = v.Raw<gold::VarArray>();
-		a->Add( 42 );
-		a->Add( "Hello" );
-		a->Add( "World" );
-		a->Add( true );
+		gold::Variant v2 = new gold::VarArray( 10 );
+		v2->Append(12);
+		v2->Append("World");
+
+		v->Concat(v2);
 	}
 
 	std::cout << v << std::endl;
