@@ -7,7 +7,7 @@
 
 
 int main() {
-	gold::Variant v = new gold::VarArray( );
+	gold::Variant v = new gold::VarArray( 10 );
 
 	{
 		gold::VarArray* a = v.Raw<gold::VarArray>();
