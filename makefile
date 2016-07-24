@@ -14,7 +14,7 @@ else
 endif
 SL=$(strip $(SL2))
 
-COMPILE_OPTIONS = -std=c++0x -Wall
+COMPILE_OPTIONS = -std=c++11 -Wall -ggdb
 
 FUNCSMAP_F = standardfuncsmap.cpp
 FUNCSMAP = functions$(SL)$(FUNCSMAP_F)
