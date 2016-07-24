@@ -17,6 +17,8 @@ public:
 	/// Creates a new, empty, map variant.
 	VarMap();
 
+	virtual Variant Copy() const;
+
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;
 
@@ -24,7 +26,7 @@ public:
 	virtual bool IsMap() const;
 
 	/// Retrieves the item at the given key
-	virtual Variant& Get( const Variant );
+	virtual Variant Get( const Variant );
 
 	/// Sets the item at the given key
 	virtual Variant Set( const Variant, Variant );

@@ -26,6 +26,11 @@ VarBool::VarBool( const std::string& s ) {
 	this->Value = !s.empty();
 }
 
+Variant VarBool::Copy() const {
+	return new VarBool(this->Value);
+
+}
+
 /// Returns the type as a string.
 const std::string& VarBool::GetType() const {
 	return( VarBool::typeName );

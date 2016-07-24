@@ -29,6 +29,9 @@ public:
 	/// Variant destructor. Decrements the reference count.
 	~Variant();
 
+	// Creates a deep copy.
+	virtual Variant Copy() const;
+
 
 	// Convenience constructors ---------------------------
 
@@ -100,6 +103,8 @@ protected:
 	/// Variant base virtual destructor
 	virtual ~VariantBase();
 
+	virtual Variant Copy() const = 0;
+
 	/// Increments the ref counter.
 	void refInc() const;
 
@@ -144,7 +149,7 @@ public:
 	// Collection methods ---------------------------------
 
 	/// Retrieves the item at the given index or key
-	virtual Variant& Get( const Variant );
+	virtual Variant Get( const Variant );
 
 	/// Sets the item at the given index or key
 	virtual Variant Set( const Variant, Variant );

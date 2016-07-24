@@ -22,6 +22,8 @@ public:
 	/// Parses a number from a string.
 	VarNumeric( const std::string& );
 
+	virtual Variant Copy() const;
+
 
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;

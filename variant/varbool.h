@@ -18,6 +18,8 @@ public:
 	/// This should only be called twice for TRUE and FALSE.
 	VarBool( bool );
 
+	virtual Variant Copy() const;
+
 	/// Creates a new boolean variant from a string value.
 	/// Empty strings are FALSE, non empty strings are TRUE.
 	VarBool( const std::string& );

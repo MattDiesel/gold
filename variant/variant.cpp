@@ -54,6 +54,11 @@ Variant::~Variant() {
 }
 
 
+Variant Variant::Copy() const {
+	return this->variant->Copy();
+}
+
+
 /// Creates a boolean variant
 Variant::Variant( bool f )
 	: variant( nullptr ) {
@@ -163,15 +168,19 @@ VariantBase::VariantBase()
 VariantBase::~VariantBase() {
 }
 
+
 /// Increments the ref counter.
 void VariantBase::refInc() const {
 	this->refCount++;
+	// std::cout << this << "::refInc() = " << this->refCount << " " << this->GetType() << "(" << this->AsString() << ")" << std::endl;
 }
 
 /// Decrements the ref counter.
 /// If this moves the ref count to zero then the variant is deleted.
 void VariantBase::refDec() const {
 	this->refCount--;
+
+	// std::cout << this << "::refDec() = " << this->refCount << " " << this->GetType() << "(" << this->AsString() << ")" << std::endl;
 
 	if ( !this->refCount ) {
 		delete ( VariantBase* )this;
@@ -226,15 +235,15 @@ bool VariantBase::IsFunc() const {
 
 
 /// Retrieves the item at the given index or key
-Variant& VariantBase::Get( const Variant v ) {
+Variant VariantBase::Get( const Variant v ) {
 	// throw EvaluateError("Attempt to access a non-collection!");
 	throw "Attempt to access a non-collection!";
 }
 
 /// Sets the item at the given index or key
 Variant VariantBase::Set( const Variant key, Variant value ) {
-	this->Get( key ) = value;
-	return( value );
+	// throw EvaluateError("Attempt to access a non-collection!");
+	throw "Attempt to access a non-collection!";
 }
 
 /// Appends an item to a collection

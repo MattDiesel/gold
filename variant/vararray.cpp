@@ -21,6 +21,16 @@ VarArray::VarArray( int cap )
 	this->Value.reserve( cap );
 }
 
+// Creates a deep copy of an array.
+Variant VarArray::Copy() const {
+	Variant ret = new VarArray(this->Value.size());
+
+	for (auto v : this->Value) {
+		ret->Append(v.Copy());
+	}
+
+	return ret;
+}
 
 
 /// Returns the type as a string.
@@ -35,24 +45,24 @@ bool VarArray::IsArray() const {
 }
 
 /// Retrieves the item at the given index
-Variant& VarArray::Get( int i ) {
+Variant VarArray::Get( int i ) {
 	return( this->Value.at( i ) );
 }
 
-/// Retrieves the item at the given index
-Variant VarArray::Set( int i, Variant v ) {
-	this->Get( i ) = v;
-	return( v );
-}
-
 /// Sets the item at the given index
-Variant& VarArray::Get( const Variant v ) {
+Variant VarArray::Get( const Variant v ) {
 	return( this->Get( v->AsInt() ) );
 }
 
 /// Sets the item at the given index
 Variant VarArray::Set( const Variant key, Variant val ) {
-	this->Get( key ) = val;
+	this->Set( key->AsInt(), val);
+	return( val );
+}
+
+/// Sets the item at the given index
+Variant VarArray::Set( int key, Variant val ) {
+	this->Value.at( key ) = val;
 	return( val );
 }
 

@@ -19,6 +19,16 @@ const std::string VarMap::typeName( "Map" );
 VarMap::VarMap() {
 }
 
+Variant VarMap::Copy() const {
+	VarMap* ret = new VarMap();
+
+	for ( auto iter : this->Value) {
+		ret->Value.insert( std::pair<Variant, Variant>( std::get<0>( iter ).Copy(), std::get<1>( iter ).Copy() ) );
+	}
+
+	return ret;
+}
+
 /// Returns the type as a string.
 const std::string& VarMap::GetType() const {
 	return( VarMap::typeName );
@@ -30,7 +40,7 @@ bool VarMap::IsMap() const {
 }
 
 /// Retrieves the item at the given key
-Variant& VarMap::Get( const Variant key ) {
+Variant VarMap::Get( const Variant key ) {
 	return( this->Value.at( key ) );
 }
 

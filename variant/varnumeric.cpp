@@ -27,6 +27,10 @@ VarNumeric::VarNumeric( const std::string& s ) {
 	// Todo: Error checking.
 }
 
+Variant VarNumeric::Copy() const {
+	return new VarNumeric(this->Value);
+}
+
 /// Returns the type as a string.
 const std::string& VarNumeric::GetType() const {
 	return( VarNumeric::typeName );
@@ -73,7 +77,7 @@ double VarNumeric::AsFloat() const {
 /// Returns the number version of the variant
 /// This overload returns a copy of itself.
 Variant VarNumeric::ToNumber() const {
-	return( this );
+	return( this->Value );
 }
 
 /// Writes the string version of the variant to the output stream

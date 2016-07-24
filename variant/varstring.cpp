@@ -19,6 +19,10 @@ VarString::VarString( std::string s )
 	: Value( s ) {
 }
 
+Variant VarString::Copy() const {
+	return new VarString(this->Value);
+}
+
 /// Returns the type as a string.
 const std::string& VarString::GetType() const {
 	return( VarString::typeName );
@@ -28,6 +32,40 @@ const std::string& VarString::GetType() const {
 bool VarString::IsString() const {
 	return( true );
 }
+
+
+Variant VarString::Get( int i ) {
+	return Variant(this->Value.substr(i, 1));
+}
+
+
+/// Retrieves the item at the given index or key
+Variant VarString::Get( const Variant key ) {
+	return this->Get( key->AsInt() );
+}
+
+/// Sets the item at the given index or key
+Variant VarString::Set( int key, Variant value ) {
+	this->Value.replace(key, 1, value->AsString());
+	return value;
+}
+
+/// Sets the item at the given index or key
+Variant VarString::Set( const Variant key, Variant value ) {
+	this->Set( key->AsInt(), value );
+	return value;
+}
+
+/// Appends an item to a collection
+bool VarString::Append( Variant ) {
+	return false;
+}
+
+/// Concatenates collections
+bool VarString::Concat( Variant ) {
+	return false;
+}
+
 
 /// Returns the string as a boolean value.
 /// "" is FALSE, all other values are TRUE.

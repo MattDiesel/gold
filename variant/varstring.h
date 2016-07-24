@@ -9,7 +9,9 @@
 #ifndef GOLD_VARIANT_VARSTRING_H
 #define GOLD_VARIANT_VARSTRING_H
 
+
 namespace gold {
+
 
 /// Variant class for strings types
 class VarString : public VariantBase {
@@ -17,11 +19,27 @@ public:
 	/// Creates a new string variant.
 	VarString( std::string );
 
+	virtual Variant Copy() const;
+
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;
 
 	/// Returns true.
 	virtual bool IsString() const;
+
+	/// Retrieves the item at the given index or key
+	virtual Variant Get( int );
+	virtual Variant Get( const Variant );
+
+	/// Sets the item at the given index or key
+	virtual Variant Set( int, Variant );
+	virtual Variant Set( const Variant, Variant );
+
+	/// Appends an item to a collection
+	virtual bool Append( Variant );
+
+	/// Concatenates collections
+	virtual bool Concat( Variant );
 
 	/// Returns the string as a boolean value.
 	/// "" is FALSE, all other values are TRUE.

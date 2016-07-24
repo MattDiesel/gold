@@ -17,6 +17,8 @@ class VarArray : public VariantBase {
 public:
 	VarArray( int );
 
+	virtual Variant Copy() const;
+
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;
 
@@ -24,13 +26,13 @@ public:
 	virtual bool IsArray() const;
 
 	/// Retrieves the item at the given index
-	virtual Variant& Get( const Variant );
+	virtual Variant Get( const Variant );
 
 	/// Sets the item at the given index
 	virtual Variant Set( const Variant, Variant );
 
 	/// Retrieves the item at the given index
-	virtual Variant& Get( int );
+	virtual Variant Get( int );
 
 	/// Sets the item at the given index
 	virtual Variant Set( int, Variant );

@@ -18,6 +18,9 @@ VarFunc::VarFunc( StandardFunction fn )
 	: func( fn ) {
 }
 
+Variant VarFunc::Copy() const {
+	return new VarFunc(this->func);
+}
 
 /// Returns the type as a string.
 const std::string& VarFunc::GetType() const {

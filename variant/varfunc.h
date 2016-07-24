@@ -19,6 +19,8 @@ public:
 	/// Creates a new function variant based on the function pointer.
 	VarFunc( StandardFunction );
 
+	virtual Variant Copy() const;
+
 	/// Returns the type as a string.
 	virtual const std::string& GetType() const;
 
